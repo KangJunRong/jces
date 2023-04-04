@@ -52,7 +52,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <scope>provided</scope>
+            <version>2.12.5</version>
         </dependency>
 
         <dependency>
