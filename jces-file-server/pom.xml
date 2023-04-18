@@ -27,17 +27,23 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.yaml</groupId>
                     <artifactId>snakeyaml</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>5.3.27</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -45,7 +51,10 @@
             <version>2.0</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -67,7 +76,6 @@
             <artifactId>poi-ooxml</artifactId>
             <version>5.1.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -78,11 +86,6 @@
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.69</version>
         </dependency>
-        <!--        <dependency>
-                    <groupId>org.csource</groupId>
-                    <artifactId>fastdfs-client-java</artifactId>
-                    <version>1.29-SNAPSHOT</version>
-                </dependency>-->
     </dependencies>
     <build>
         <plugins>
