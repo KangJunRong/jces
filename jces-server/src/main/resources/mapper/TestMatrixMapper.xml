@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.terminal.TestMatrixMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestMatrixVo">
+        <id column="matrix_id" jdbcType="VARCHAR" property="matrixId"></id>
+        <result column="engine_id" jdbcType="VARCHAR" property="engineId"/>
+        <result column="version_no" jdbcType="VARCHAR" property="versionNo"/>
+        <result column="matrix_name" jdbcType="VARCHAR" property="matrixName"/>
+        <result column="card_count" jdbcType="INTEGER" property="cardCount"/>
+        <result column="matrix_status" jdbcType="VARCHAR" property="matrixStatus"/>
+        <result column="del_flg" jdbcType="VARCHAR" property="delFlg"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="port" jdbcType="VARCHAR" property="port"/>
+    </resultMap>
+
+    <insert id="add">
+        insert into test_matrix
+        (matrix_id,engine_id,version_no,matrix_name,card_count,matrix_status,del_flg,update_user,update_date,create_user,create_date)
+        values
+        <foreach collection="list" item="lt" separator=",">
+            (#{lt.matrixId},#{lt.engineId},#{lt.versionNo},#{lt.matrixName},
+            #{lt.cardCount},#{lt.matrixStatus},#{lt.delFlg},#{lt.updateUser},
+            #{lt.updateDate},#{lt.createUser},#{lt.createDate})
+        </foreach>
+    </insert>
+
+    <delete id="matrixInfoClean">
+        delete from test_matrix where engine_id = #{engineId};
+        delete from test_matrix_card where engine_id = #{engineId};
+    </delete>
+
+    <select id="list" resultMap="BaseResultMap">
+        select
+        matrix_id,engine_id,version_no,matrix_name,card_count,matrix_status,del_flg,update_user,update_date,create_user,create_date
+        from test_matrix
+        <where>
+            1 = 1
+            <if test="engineId!=null">
+                and engine_id = #{engineId}
+            </if>
+            <if test="matrixId!=null">
+                and matrix_id = #{matrixId}
+            </if>
+            and del_flg = 0
+        </where>
+    </select>
+
+    <select id="isExist" resultType="java.lang.Integer">
+        select count(matrix_id) from test_matrix where version_no = #{versionNo} and card_count &gt; 0
+    </select>
+    <select id="findFreeList" resultMap="BaseResultMap">
+        SELECT
+            a.*,
+            b.ip,
+            b.PORT
+        FROM
+            test_matrix a
+                INNER JOIN test_engine b ON a.engine_id = b.id
+        WHERE
+            b.`status` = '1'
+          AND a.matrix_status = #{matrixStatus}
+          AND a.card_count &gt; 0
+          <if test="versionNo != null">
+             and version_no = #{versionNo}
+          </if>
+    </select>
+
+    <select id="findById" resultMap="BaseResultMap">
+        select * from test_matrix where matrix_id = #{matrixId} and del_flg = 0
+    </select>
+
+    <update id="update">
+        update test_matrix
+        <set>
+            <if test="matrixName != null">
+                matrix_name = #{matrixName},
+            </if>
+            <if test="matrixStatus != null">
+                matrix_status = #{matrixStatus},
+            </if>
+            <if test="versionNo != null">
+                version_no = #{versionNo},
+            </if>
+            <if test="cardCount != null">
+                card_count = #{cardCount},
+            </if>
+        </set>
+        where matrix_id = #{matrixId}
+    </update>
+</mapper>

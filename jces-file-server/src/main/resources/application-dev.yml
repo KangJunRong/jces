@@ -1,0 +1,13 @@
+param:
+  jces:
+    uploadUrl: E:\\file-server\\
+    #云平台地址
+    cloudServerUrl: http://192.168.10.59:8030/jces-server/
+    expFilePath: E:\\2020\\jces\\code\\cmcc\\tools\\Jces_ide_2.1.0\\simuls\\JCWDE\\api_export_files_cmcc
+spring:
+    application:
+        name: Spring Boot Client
+logging:
+  config: classpath:logback-spring.xml
+  file:
+    path: d:/logs/file-server

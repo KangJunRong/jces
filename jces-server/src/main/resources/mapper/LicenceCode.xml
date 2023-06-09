@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.licenceCode.LicenceCodeMapper">
+
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.LicenceCodeVo">
+        <id column="id" property="id"/>
+        <result column="machine_code" property="machineCode"/>
+        <result column="licence_code" property="licenceCode"/>
+        <result column="effect_date" property="effectDate"/>
+        <result column="expiry_date" property="expiryDate"/>
+        <result column="approve_status" property="approveStatus"/>
+        <result column="del_flg" property="delFlg"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="applied_number" property="appliedNumber"/>
+        <result column="reject_desc" property="rejectDesc"/>
+        <result column="api_role_id" property="apiRoleId"/>
+        <association property="createUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+            <result column="account" property="account"/>
+            <result column="licence_code_quota" property="licenceCodeQuota"/>
+        </association>
+        <association property="approveUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="approve_u_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        a.id as "id",
+        a.machine_code as "machine_code",
+        a.licence_code as "licence_code",
+        a.effect_date as "effect_date",
+        a.expiry_date as "expiry_date",
+        a.approve_status as "approve_status",
+        a.del_flg as "del_flg",
+        a.update_user as "u1_id",
+        a.update_date as "update_date",
+        u.id as "u_id",
+        u.name as "u_name",
+        u.account as "u_account",
+        u.licence_code_quota as "u_licence_code_quota",
+        a.create_date as "create_date",
+        approve_u.id as "approve_u_id",
+        approve_u.name as "approve_u_name",
+        a.approve_date as "approveDate",
+        a.reject_desc as "reject_desc",
+        a.api_role_id as "api_role_id"
+    </sql>
+    <sql id="Base_Joins">
+        left join sys_user u on u.id = a.create_user
+          left join sys_user approve_u on approve_u.id = a.approve_user
+    </sql>
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from licence_code a
+        <include refid="Base_Joins"/>
+        <where>
+            a.del_flg = 0
+            <if test="machineCode != null and machineCode != ''">
+                and a.machine_code like concat('%', #{machineCode}, '%')
+            </if>
+            <if test="createUser != null and createUser.name != null and createUser.name !=''">
+                and u.name like concat('%', #{createUser.name}, '%')
+            </if>
+            <if test="createUser != null and createUser.id != null and createUser.id !=''">
+                and a.create_user = #{createUser.id}
+            </if>
+            <if test="approveStatus != null and approveStatus != ''">
+                and a.approve_status = #{approveStatus}
+            </if>
+            order by a.create_date DESC
+        </where>
+    </select>
+    <insert id="insert">
+        insert into licence_code(id,
+                                 machine_code,
+                                 licence_code,
+                                 effect_date,
+                                 expiry_date,
+                                 approve_status,
+                                 del_flg,
+                                 update_user,
+                                 update_date,
+                                 create_user,
+                                 create_date)
+        values (#{id},
+                #{machineCode},
+                #{licenceCode},
+                #{effectDate},
+                #{expiryDate},
+                #{approveStatus},
+                #{delFlg},
+                #{updateUser.id},
+                #{updateDate},
+                #{createUser.id},
+                #{createDate})
+    </insert>
+
+    <select id="countGroupByApplicant" resultMap="BaseResultMap">
+        SELECT
+        u.id AS "u_id",
+        a.id AS "id",
+        u. NAME AS "u_name",
+        u.account AS "u_account",
+        u.licence_code_quota AS "u_licence_code_quota",
+        count(1) AS "applied_number"
+        FROM
+        sys_user u
+        LEFT JOIN licence_code a ON u.id = a.create_user
+        WHERE
+        u.del_flg = 0
+        <if test="userIds != null and userIds.size > 0">
+            AND u.id in
+            <foreach collection="userIds" index="index" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="createUser != null and createUser.name != null and createUser.name !=''">
+            and u.name like concat('%', #{createUser.name}, '%')
+        </if>
+        AND a.del_flg = 0
+        <if test="approveStatus != null and approveStatus!=''">
+            AND a.approve_status = #{approveStatus}
+        </if>
+        GROUP BY
+        u.id
+        order by u.create_date DESC
+    </select>
+
+    <update id="update">
+        update licence_code
+        <set>
+            <if test="machineCode != null and machineCode != '' ">
+                machine_code = #{machineCode},
+            </if>
+            <if test="licenceCode != null and licenceCode != '' ">
+                licence_code = #{licenceCode},
+            </if>
+            <if test="effectDate != null">
+                effect_date = #{effectDate},
+            </if>
+            <if test="expiryDate != null">
+                expiry_date = #{expiryDate},
+            </if>
+            <if test="approveStatus != null and approveStatus != '' ">
+                approve_status = #{approveStatus},
+            </if>
+            <if test="updateUser != null and updateUser.id != null and updateUser.id != ''">
+                update_user = #{updateUser.id},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate},
+            </if>
+            <if test="approveUser != null and approveUser.id != null and approveUser.id != ''">
+                approve_user = #{approveUser.id},
+            </if>
+            <if test="approveDate != null">
+                approve_date = #{approveDate},
+            </if>
+            <if test="rejectDesc != null and rejectDesc != '' ">
+                reject_desc = #{rejectDesc}
+            </if>
+            <if test="apiRoleId != null and apiRoleId != ''">
+                api_role_id = #{apiRoleId}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="appliedLicenceCodeCount" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM
+        licence_code a
+        WHERE
+        a.del_flg = 0
+        <if test="createUser != null and createUser.id != null and createUser.id !=''">
+            and a.create_user = #{createUser.id}
+        </if>
+        <if test="approveStatus != null and approveStatus!=''">
+            AND (a.approve_status IS NULL or a.approve_status = #{approveStatus})
+        </if>
+    </select>
+    <select id="findByCode" resultMap="BaseResultMap">
+        select *
+        from licence_code
+        where machine_code = #{code}
+          and del_flg = 0 limit 1
+    </select>
+
+
+    <select id="findById" resultMap="BaseResultMap">
+        select *
+        from licence_code
+        where id = #{id}
+    </select>
+
+    <select id="findByApiRoleId" resultMap="BaseResultMap">
+        select *
+        from licence_code
+        where api_role_id = #{apiRoleId}
+    </select>
+
+    <update id="updateLicenceCodeByApiRoleId">
+        <foreach collection="list" item="lt" separator=";">
+            update licence_code set licence_code = #{lt.licenceCode} where id = #{lt.id}
+        </foreach>
+    </update>
+</mapper>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.applet.AppletExeLoadFileMapper">
+  <resultMap id="BaseResultMap" type="com.ecp.jces.vo.AppletExeLoadFileVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="applet_version_id" jdbcType="VARCHAR" property="appletVersionId" />
+    <result column="applet_id" jdbcType="VARCHAR" property="appletId" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="aid" jdbcType="VARCHAR" property="aid" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="load_sequence" jdbcType="INTEGER" property="loadSequence" />
+    <result column="del_flg" jdbcType="SMALLINT" property="delFlg" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="load_param" jdbcType="VARCHAR" property="loadParam" />
+    <collection property="moduleVoList"
+                column="{id=id}"
+                select="getModules"
+    >
+    </collection>
+  </resultMap>
+
+  <select id="getModules" resultMap="com.ecp.jces.server.dc.mapper.applet.AppletExeModuleMapper.moduleMap">
+        select aid,id, load_file_id
+        from applet_exe_module
+        where load_file_id = #{id}
+  </select>
+
+  <delete id="del" parameterType="java.lang.String">
+    delete from applet_exe_load_file
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="add" parameterType="com.ecp.jces.form.AppletExeLoadFileForm">
+    insert into applet_exe_load_file (id, applet_version_id, applet_id, 
+      type, name, aid, file_name, 
+      load_sequence, hash, del_flg, update_user,
+      update_date, create_user, create_date, load_param
+      )
+    values (#{id,jdbcType=VARCHAR}, #{appletVersionId,jdbcType=VARCHAR}, #{appletId,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{aid,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, 
+      #{loadSequence,jdbcType=INTEGER}, #{hash,jdbcType=VARCHAR}, #{delFlg,jdbcType=SMALLINT}, #{updateUser,jdbcType=VARCHAR},
+      #{updateDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
+      #{loadParam})
+  </insert>
+
+  <update id="edit" parameterType="com.ecp.jces.form.AppletExeLoadFileForm">
+    update applet_exe_load_file
+    <set>
+      <if test="appletVersionId != null and appletVersionId != '' ">
+        applet_version_id = #{appletVersionId,jdbcType=VARCHAR},
+      </if>
+      <if test="appletId != null and appletId != '' ">
+        applet_id = #{appletId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null and type != '' ">
+        `type` = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="name != null and name != '' ">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="aid != null and aid != '' ">
+        aid = #{aid,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null and fileName != '' ">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="loadSequence != null">
+        load_sequence = #{loadSequence,jdbcType=INTEGER},
+      </if>
+      <if test="delFlg != null">
+        del_flg = #{delFlg,jdbcType=SMALLINT},
+      </if>
+      <if test="updateUser != null and updateUser != '' ">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="loadParam != null and loadParam != '' ">
+        load_param = #{loadParam,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.applet.TestCheckReportMapper">
+  <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestCheckReportVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="applet_id" jdbcType="VARCHAR" property="appletId" />
+    <result column="applet_version_id" jdbcType="VARCHAR" property="appletVersionId" />
+    <result column="memory_dtr_size" jdbcType="INTEGER" property="memoryDtrSize" />
+    <result column="memory_dtr_size_expect" jdbcType="INTEGER" property="memoryDtrSizeExpect" />
+    <result column="memory_rtr_size" jdbcType="INTEGER" property="memoryRtrSize" />
+    <result column="memory_rtr_size_expect" jdbcType="INTEGER" property="memoryRtrSizeExpect" />
+    <result column="memory_code_size" jdbcType="INTEGER" property="memoryCodeSize" />
+    <result column="memory_code_size_expect" jdbcType="INTEGER" property="memoryCodeSizeExpect" />
+    <result column="static_reference_array_init_amount" jdbcType="INTEGER" property="staticReferenceArrayInitAmount" />
+    <result column="static_reference_array_init_amount_expect" jdbcType="INTEGER" property="staticReferenceArrayInitAmountExpect" />
+    <result column="static_reference_array_init_space" jdbcType="INTEGER" property="staticReferenceArrayInitSpace" />
+    <result column="static_reference_array_init_space_expect" jdbcType="INTEGER" property="staticReferenceArrayInitSpaceExpect" />
+    <result column="static_reference_null_amount" jdbcType="INTEGER" property="staticReferenceNullAmount" />
+    <result column="static_reference_null_amount_expect" jdbcType="INTEGER" property="staticReferenceNullAmountExpect" />
+    <result column="static_reference_null_space" jdbcType="INTEGER" property="staticReferenceNullSpace" />
+    <result column="static_reference_null_space_expect" jdbcType="INTEGER" property="staticReferenceNullSpaceExpect" />
+    <result column="static_primitive_default_amount" jdbcType="INTEGER" property="staticPrimitiveDefaultAmount" />
+    <result column="static_primitive_default_amount_expect" jdbcType="INTEGER" property="staticPrimitiveDefaultAmountExpect" />
+    <result column="static_primitive_default_space" jdbcType="INTEGER" property="staticPrimitiveDefaultSpace" />
+    <result column="static_primitive_default_space_expect" jdbcType="INTEGER" property="staticPrimitiveDefaultSpaceExpect" />
+    <result column="static_primitive_non_default_amount" jdbcType="INTEGER" property="staticPrimitiveNonDefaultAmount" />
+    <result column="static_primitive_non_default_amount_expect" jdbcType="INTEGER" property="staticPrimitiveNonDefaultAmountExpect" />
+    <result column="static_primitive_non_default_space" jdbcType="INTEGER" property="staticPrimitiveNonDefaultSpace" />
+    <result column="static_primitive_non_default_space_expect" jdbcType="INTEGER" property="staticPrimitiveNonDefaultSpaceExpect" />
+    <result column="install_new_amount" jdbcType="INTEGER" property="installNewAmount" />
+    <result column="install_new_amount_expect" jdbcType="INTEGER" property="installNewAmountExpect" />
+    <result column="install_new_space" jdbcType="INTEGER" property="installNewSpace" />
+    <result column="install_new_space_expect" jdbcType="INTEGER" property="installNewSpaceExpect" />
+    <result column="install_new_array_amount" jdbcType="INTEGER" property="installNewArrayAmount" />
+    <result column="install_new_array_amount_expect" jdbcType="INTEGER" property="installNewArrayAmountExpect" />
+    <result column="install_new_array_space" jdbcType="INTEGER" property="installNewArraySpace" />
+    <result column="install_new_array_space_expect" jdbcType="INTEGER" property="installNewArraySpaceExpect" />
+    <result column="nonstandard_api" jdbcType="VARCHAR" property="nonstandardApi" />
+    <result column="del_flg" jdbcType="SMALLINT" property="delFlg" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="sensitive_api" jdbcType="VARCHAR" property="sensitiveApi" />
+    <result column="event_list" jdbcType="VARCHAR" property="eventList" />
+    <result column="download_install_time_expect" jdbcType="INTEGER" property="downloadInstallTimeExpect" />
+    <result column="download_max_time_expect" jdbcType="INTEGER" property="downloadMaxTimeExpect" />
+    <result column="load_c7_max_expect" jdbcType="INTEGER" property="loadC7MaxExpect" />
+    <result column="load_c8_max_expect" jdbcType="INTEGER" property="loadC8MaxExpect" />
+    <result column="install_c7_max_expect" jdbcType="INTEGER" property="installC7MaxExpect" />
+    <result column="install_c8_max_expect" jdbcType="INTEGER" property="installC8MaxExpect" />
+  </resultMap>
+
+  <select id="findByAppletIdAndVersionId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select *
+    from test_check_report
+    where del_flg = 0 and applet_id = #{appletId,jdbcType=VARCHAR}
+    and applet_version_id = #{appletVersionId,jdbcType=VARCHAR}
+  </select>
+  <delete id="del" parameterType="java.lang.String">
+    delete from test_check_report
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="add" parameterType="com.ecp.jces.form.TestCheckReportForm">
+    insert into test_check_report (id, applet_id, applet_version_id, memory_dtr_size, memory_dtr_size_expect,
+      memory_rtr_size, memory_rtr_size_expect, memory_code_size, memory_code_size_expect,
+      static_reference_array_init_amount, static_reference_array_init_amount_expect, static_reference_array_init_space,
+      static_reference_array_init_space_expect, static_reference_null_amount, static_reference_null_amount_expect,
+      static_reference_null_space, static_reference_null_space_expect, static_primitive_default_amount,
+      static_primitive_default_amount_expect, static_primitive_default_space, static_primitive_default_space_expect,
+      static_primitive_non_default_amount, static_primitive_non_default_amount_expect, static_primitive_non_default_space,
+      static_primitive_non_default_space_expect, install_new_amount, install_new_amount_expect,
+      install_new_space, install_new_space_expect, install_new_array_amount, install_new_array_amount_expect,
+      install_new_array_space, install_new_array_space_expect, nonstandard_api, del_flg,
+      update_user, update_date, create_user, create_date,
+      sensitive_api, event_list, download_install_time_expect,
+      download_max_time_expect, load_c7_max_expect, load_c8_max_expect, install_c7_max_expect, install_c8_max_expect)
+    values (#{id}, #{appletId}, #{appletVersionId}, #{memoryDtrSize}, #{memoryDtrSizeExpect},
+      #{memoryRtrSize}, #{memoryRtrSizeExpect}, #{memoryCodeSize}, #{memoryCodeSizeExpect},
+      #{staticReferenceArrayInitAmount}, #{staticReferenceArrayInitAmountExpect}, #{staticReferenceArrayInitSpace},
+      #{staticReferenceArrayInitSpaceExpect}, #{staticReferenceNullAmount}, #{staticReferenceNullAmountExpect},
+      #{staticReferenceNullSpace}, #{staticReferenceNullSpaceExpect}, #{staticPrimitiveDefaultAmount},
+      #{staticPrimitiveDefaultAmountExpect}, #{staticPrimitiveDefaultSpace}, #{staticPrimitiveDefaultSpaceExpect},
+      #{staticPrimitiveNonDefaultAmount}, #{staticPrimitiveNonDefaultAmountExpect}, #{staticPrimitiveNonDefaultSpace},
+      #{staticPrimitiveNonDefaultSpaceExpect}, #{installNewAmount}, #{installNewAmountExpect},
+      #{installNewSpace}, #{installNewSpaceExpect}, #{installNewArrayAmount}, #{installNewArrayAmountExpect},
+      #{installNewArraySpace}, #{installNewArraySpaceExpect}, #{nonstandardApi}, #{delFlg},
+      #{updateUser}, #{updateDate}, #{createUser}, #{createDate},
+      #{sensitiveApi}, #{eventList},#{downloadInstallTimeExpect}, #{downloadMaxTimeExpect}, #{loadC7MaxExpect},
+      #{loadC8MaxExpect}, #{installC7MaxExpect}, #{installC8MaxExpect})
+  </insert>
+
+  <update id="edit" parameterType="com.ecp.jces.form.TestCheckReportForm">
+    update test_check_report
+    <set>
+      <if test="appletId != null and appletId != ''">
+        applet_id = #{appletId},
+      </if>
+      <if test="appletVersionId != null and appletVersionId != ''">
+        applet_version_id = #{appletVersionId},
+      </if>
+      <if test="memoryDtrSize != null">
+        memory_dtr_size = #{memoryDtrSize},
+      </if>
+      <if test="memoryDtrSizeExpect != null">
+        memory_dtr_size_expect = #{memoryDtrSizeExpect},
+      </if>
+      <if test="memoryRtrSize != null">
+        memory_rtr_size = #{memoryRtrSize},
+      </if>
+      <if test="memoryRtrSizeExpect != null">
+        memory_rtr_size_expect = #{memoryRtrSizeExpect},
+      </if>
+      <if test="memoryCodeSize != null">
+        memory_code_size = #{memoryCodeSize},
+      </if>
+      <if test="memoryCodeSizeExpect != null">
+        memory_code_size_expect = #{memoryCodeSizeExpect},
+      </if>
+      <if test="staticReferenceArrayInitAmount != null">
+        static_reference_array_init_amount = #{staticReferenceArrayInitAmount},
+      </if>
+      <if test="staticReferenceArrayInitAmountExpect != null">
+        static_reference_array_init_amount_expect = #{staticReferenceArrayInitAmountExpect},
+      </if>
+      <if test="staticReferenceArrayInitSpace != null">
+        static_reference_array_init_space = #{staticReferenceArrayInitSpace},
+      </if>
+      <if test="staticReferenceArrayInitSpaceExpect != null">
+        static_reference_array_init_space_expect = #{staticReferenceArrayInitSpaceExpect},
+      </if>
+      <if test="staticReferenceNullAmount != null">
+        static_reference_null_amount = #{staticReferenceNullAmount},
+      </if>
+      <if test="staticReferenceNullAmountExpect != null">
+        static_reference_null_amount_expect = #{staticReferenceNullAmountExpect},
+      </if>
+      <if test="staticReferenceNullSpace != null">
+        static_reference_null_space = #{staticReferenceNullSpace},
+      </if>
+      <if test="staticReferenceNullSpaceExpect != null">
+        static_reference_null_space_expect = #{staticReferenceNullSpaceExpect},
+      </if>
+      <if test="staticPrimitiveDefaultAmount != null">
+        static_primitive_default_amount = #{staticPrimitiveDefaultAmount},
+      </if>
+      <if test="staticPrimitiveDefaultAmountExpect != null">
+        static_primitive_default_amount_expect = #{staticPrimitiveDefaultAmountExpect},
+      </if>
+      <if test="staticPrimitiveDefaultSpace != null">
+        static_primitive_default_space = #{staticPrimitiveDefaultSpace},
+      </if>
+      <if test="staticPrimitiveDefaultSpaceExpect != null">
+        static_primitive_default_space_expect = #{staticPrimitiveDefaultSpaceExpect},
+      </if>
+      <if test="staticPrimitiveNonDefaultAmount != null">
+        static_primitive_non_default_amount = #{staticPrimitiveNonDefaultAmount},
+      </if>
+      <if test="staticPrimitiveNonDefaultAmountExpect != null">
+        static_primitive_non_default_amount_expect = #{staticPrimitiveNonDefaultAmountExpect},
+      </if>
+      <if test="staticPrimitiveNonDefaultSpace != null">
+        static_primitive_non_default_space = #{staticPrimitiveNonDefaultSpace},
+      </if>
+      <if test="staticPrimitiveNonDefaultSpaceExpect != null">
+        static_primitive_non_default_space_expect = #{staticPrimitiveNonDefaultSpaceExpect},
+      </if>
+      <if test="installNewAmount != null">
+        install_new_amount = #{installNewAmount},
+      </if>
+      <if test="installNewAmountExpect != null">
+        install_new_amount_expect = #{installNewAmountExpect},
+      </if>
+      <if test="installNewSpace != null">
+        install_new_space = #{installNewSpace},
+      </if>
+      <if test="installNewSpaceExpect != null">
+        install_new_space_expect = #{installNewSpaceExpect},
+      </if>
+      <if test="installNewArrayAmount != null">
+        install_new_array_amount = #{installNewArrayAmount},
+      </if>
+      <if test="installNewArrayAmountExpect != null">
+        install_new_array_amount_expect = #{installNewArrayAmountExpect},
+      </if>
+      <if test="installNewArraySpace != null">
+        install_new_array_space = #{installNewArraySpace},
+      </if>
+      <if test="installNewArraySpaceExpect != null">
+        install_new_array_space_expect = #{installNewArraySpaceExpect},
+      </if>
+      <if test="nonstandardApi != null and nonstandardApi != ''">
+        nonstandard_api = #{nonstandardApi},
+      </if>
+      <if test="delFlg != null">
+        del_flg = #{delFlg},
+      </if>
+      <if test="updateUser != null and updateUser != ''">
+        update_user = #{updateUser},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate},
+      </if>
+      <if test="createUser != null and createUser != ''">
+        create_user = #{createUser},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate},
+      </if>
+
+      <if test="sensitiveApi != null and sensitiveApi != ''">
+        sensitive_api = #{sensitiveApi},
+      </if>
+      <if test="eventList != null and eventList != ''">
+        event_list = #{eventList},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateSensitiveApi">
+    update test_check_report set sensitive_api = #{sensitiveApi}
+    where applet_id = #{appletId} and applet_version_id = #{appletVersionId}
+  </update>
+
+</mapper>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.terminal.TestCardManufacturerMapper">
+
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestCardManufacturerVo">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="addr" property="addr" />
+        <result column="description" property="description" />
+        <result column="status" property="status" />
+        <result column="code" property="code" />
+        <result column="delFlg" property="delFlg" />
+        <result column="createDate" property="createDate" />
+        <result column="updateDate" property="updateDate" />
+        <association property="updateUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u1_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+        <association property="createUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+          a.id as "id",
+          a.name as "name",
+          a.addr as "addr",
+          a.description as "description",
+          a.status as "status",
+          a.code as "code",
+          a.del_flg as "delFlg",
+          a.update_user as "u1_id",
+          a.update_date as "updateDate",
+          u.id as "u_id",
+          u.name as "u_name",
+          a.create_date as "createDate"
+      </sql>
+    <sql id="Base_Joins">
+          left join sys_user u on u.id = a.create_user
+      </sql>
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from test_card_manufacturer a
+        <include refid="Base_Joins" />
+        <where>
+            a.del_flg = 0
+            <if test="name != null and name != ''">
+                and a.name like concat('%', #{name}, '%')
+            </if>
+            <if test="addr != null and addr != ''">
+                and a.addr like concat('%', #{addr}, '%')
+            </if>
+            <if test="description != null and description != ''">
+                and a.description like concat('%', #{description}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+            order by a.create_date DESC
+        </where>
+    </select>
+    <select id="allForCode" resultMap="BaseResultMap">
+        select id,`name`,addr,description,status, code from test_card_manufacturer where del_flg = 0;
+    </select>
+    <insert id="insert">
+        insert into test_card_manufacturer(
+            id,
+            name,
+            addr,
+            description,
+            status,
+            code,
+            del_flg,
+            update_user,
+            update_date,
+            create_user,
+            create_date
+        )values(
+            #{id},
+            #{name},
+            #{addr},
+            #{description},
+            #{status},
+            #{code},
+            #{delFlg},
+            #{updateUser.id},
+            #{updateDate},
+            #{createUser.id},
+            #{createDate}
+        )
+    </insert>
+
+    <update id="update">
+        update test_card_manufacturer
+        set
+           name = #{name},
+           addr = #{addr},
+           description = #{description},
+           status = #{status},
+           code = #{code},
+           update_user = #{updateUser.id},
+           update_date = #{updateDate}
+        where id = #{id}
+    </update>
+
+    <update id="updateName">
+        update test_card_manufacturer
+        set
+           `name` = #{name}
+        where id = #{id}
+    </update>
+
+    <update id="delete">
+       update test_card_manufacturer a
+        set
+           a.del_flg = #{delFlg}
+        where a.id = #{id}
+    </update>
+
+    <select id="getByCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from test_card_manufacturer a
+        <include refid="Base_Joins" />
+        where a.del_flg = 0 and a.code = #{code}
+    </select>
+
+    <select id="getByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from test_card_manufacturer a
+        <include refid="Base_Joins" />
+        where a.del_flg = 0 and a.name = #{name}
+    </select>
+
+</mapper>

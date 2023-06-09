@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.task.TestReportApduMapper">
+  <resultMap id="BaseResultMap" type="com.ecp.jces.form.TestReportApduForm">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="test_schedule_id" jdbcType="VARCHAR" property="testScheduleId" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="list" jdbcType="VARCHAR" property="list" />
+  </resultMap>
+
+
+  <insert id="add" parameterType="com.ecp.jces.form.TestReportApduForm">
+    insert into test_report_apdu (test_schedule_id, `type`, list)
+    values (#{testScheduleId}, #{type}, #{list})
+  </insert>
+
+  <select id="list" resultMap="BaseResultMap">
+    select * from test_report_apdu
+    <where>
+      1=1
+      <if test="type != null">
+        and `type` = #{type}
+      </if>
+      <if test="testScheduleId != null">
+        and test_schedule_id = #{testScheduleId}
+      </if>
+    </where>
+    order by id asc
+  </select>
+
+</mapper>

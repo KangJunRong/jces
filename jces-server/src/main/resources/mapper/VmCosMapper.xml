@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.cos.VmCosMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.VmCosVo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="version_no" jdbcType="VARCHAR" property="versionNo"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="del_flg" jdbcType="INTEGER" property="delFlg"/>
+    </resultMap>
+
+    <select id="list" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id,
+        version_no,
+        status,
+        remark,
+        update_user,
+        update_date,
+        create_user,
+        create_date
+        from vm_cos
+        <where>
+            <if test=" versionNo != null and versionNo != '' ">
+                and version_no like concat('%',#{versionNo},'%')
+            </if>
+            <if test=" status != null and status != '' ">
+                and status = #{status,jdbcType= INTEGER}
+            </if>
+            and del_flg = '0'
+        </where>
+    </select>
+
+    <delete id="del">
+        delete from vm_cos where id = #{id};
+        delete from vm_cos_file where cos_id = #{id}
+    </delete>
+
+    <insert id="add">
+        insert into vm_cos (id, version_no, status, remark, update_user, update_date, create_user, create_date, del_flg)
+        values (#{id,jdbcType=VARCHAR}, #{versionNo, jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
+                #{remark,jdbcType=VARCHAR}, #{updateUser,jdbcType=VARCHAR}, #{updateDate},
+                #{createUser,jdbcType=VARCHAR}, #{createDate},
+                #{delFlg,jdbcType=INTEGER})
+    </insert>
+
+    <select id="findByVersionNo" resultMap="BaseResultMap">
+        select id,
+               version_no,
+               status,
+               remark,
+               update_user,
+               update_date,
+               create_user,
+               create_date
+        from vm_cos
+        where version_no = #{versionNo}
+          and del_flg = 0
+    </select>
+
+    <update id="edit">
+        update vm_cos
+        <set>
+            <if test="status != null and status != '' ">
+                status = #{status},
+            </if>
+            <if test="versionNo != null and versionNo != '' ">
+                version_no = #{versionNo},
+                remark = #{remark},
+            </if>
+            <if test="updateUser != null and updateUser != '' ">
+                update_user = #{updateUser},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

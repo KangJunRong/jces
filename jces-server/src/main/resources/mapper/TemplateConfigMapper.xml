@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.sys.TemplateConfigMapper">
+  <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TemplateConfigVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="collects" jdbcType="VARCHAR" property="collects" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="del_flg" jdbcType="SMALLINT" property="delFlg" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, collects, `name`, del_flg, update_user, update_date, create_user, create_date,
+    remark
+  </sql>
+  <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from template_config
+    where id = #{id}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from template_config
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.ecp.jces.form.TemplateConfigForm">
+    insert into template_config (id, collects, `name`, del_flg, update_user, update_date, create_user,
+      create_date, remark)
+    values (#{id}, #{collects}, #{name}, #{delFlg}, #{updateUser}, #{updateDate}, #{createUser}, 
+      #{createDate}, #{remark})
+  </insert>
+  <update id="update" parameterType="com.ecp.jces.form.TemplateConfigForm">
+    update template_config
+    <set>
+      <if test="collects != null and collects != ''">
+        collects = #{collects},
+      </if>
+      <if test="name != null and name != ''">
+        `name` = #{name},
+      </if>
+      <if test="delFlg != null">
+        del_flg = #{delFlg},
+      </if>
+      <if test="updateUser != null and updateUser != ''">
+        update_user = #{updateUser},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate},
+      </if>
+      <if test="createUser != null and createUser != ''">
+        create_user = #{createUser},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate},
+      </if>
+      <if test="remark != null and remark != ''">
+        remark = #{remark},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="list" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from template_config
+    <where>
+      del_flg = 0
+      <if test="name != null and name != ''">
+        and `name` like concat('%', #{name}, '%')
+      </if>
+    </where>
+  </select>
+  <select id="findByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from template_config where `name` = #{name}
+  </select>
+</mapper>

@@ -1,0 +1,68 @@
+spring:
+    datasource:
+        name: mysql
+        type: com.alibaba.druid.pool.DruidDataSource
+        druid:
+          filters: stat
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/cmcc_jces_v2.0?useUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+          username: root
+          #加密前密码 ： qwe7332371
+          password: ENC(zExWmAQEIF9/ujn4YewRZSozx6ozxsbK)
+          initial-size: 10
+          min-idle: 50
+          max-active: 500
+          max-wait: 60000
+          time-between-eviction-runs-millis: 60000
+          min-evictable-idle-time-millis: 35000
+          validation-query: SELECT 'x'
+          test-while-idle: true
+          test-on-borrow: false
+          test-on-return: false
+          pool-prepared-statements: true
+          max-pool-prepared-statement-per-connection-size: 500
+    application:
+        name: Jces Cloud Server
+    rabbitmq:
+      host: 192.168.12.125 # RabbitMQ 服务的地址
+      port: 5672 # RabbitMQ 服务的端口
+      username: admin # RabbitMQ 服务的账号
+      password: ENC(OOj4hpEV9GRV5wSDFfRigQ==) # RabbitMQ 服务的密码 admin
+      virtual-host: /test
+
+auth:
+  redis:
+    database: 12
+    host: 127.0.0.1
+    password:
+    port: 6379
+    pool:
+      max-active: 500
+      max-idle: 500
+      min-idle: 50
+      max-wait: 20000
+
+logging:
+  config: classpath:logback-spring.xml
+  file:
+    path: /opt/jces/jces-server/logs
+
+mail:
+  host: mail.eastcompeace.com
+  port: 25
+  user: luchunli@eastcompeace.com
+  password:  ENC(6/ptD5MkfgVyT2m7ezjJzt29OfJqM96/)
+#加密前密码 ： 7S3uP6Q8
+
+forum:
+  url:
+    admin: http://192.168.10.127:8033/forum/admin/thirdPartyLogin
+    developer: http://192.168.10.127:8033/forum/loginForThird
+
+param:
+  expFilePath: /opt/jces/cmcc
+  third:
+    uploadUrl: /opt/jces/jces-file/file/cap/
+    excel: /opt/jces/jces-file/file/excel/
+    reportPath: /opt/jces/jces-file/file/report
+    downloadUrl: http://192.168.12.125:8080/jces-file/file/downloadReport?key=

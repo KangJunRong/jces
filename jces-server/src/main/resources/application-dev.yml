@@ -1,0 +1,68 @@
+spring:
+    datasource:
+        name: mysql
+        type: com.alibaba.druid.pool.DruidDataSource
+        druid:
+          filters: stat
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/cmcc_jces_v1.1?useUnicode=true&characterEncoding=UTF8&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+          username: root
+          #加密前密码 ： qwe7332371
+          password: ENC(zExWmAQEIF9/ujn4YewRZSozx6ozxsbK)
+          initial-size: 10
+          min-idle: 50
+          max-active: 500
+          max-wait: 60000
+          time-between-eviction-runs-millis: 60000
+          min-evictable-idle-time-millis: 35000
+          validation-query: SELECT 'x'
+          test-while-idle: true
+          test-on-borrow: false
+          test-on-return: false
+          pool-prepared-statements: true
+          max-pool-prepared-statement-per-connection-size: 500
+    application:
+        name: Spring Boot Client
+    rabbitmq:
+      host: 159.75.136.237 # RabbitMQ 服务的地址
+      port: 5672 # RabbitMQ 服务的端口
+      username: admin # RabbitMQ 服务的账号
+      password: ENC(OOj4hpEV9GRV5wSDFfRigQ==) # RabbitMQ 服务的密码 admin
+      virtual-host: /dev
+auth:
+  redis:
+    database: 1
+    host: 127.0.0.1
+    #加密前密码 ： test_r2022+
+    password: ENC(VbuoAxk/biv0KxCKYTkzB/XTk/DLKdfy)
+    port: 6379
+    pool:
+      max-active: 500
+      max-idle: 500
+      min-idle: 50
+      max-wait: 20000
+
+logging:
+  config: classpath:logback-spring.xml
+  file:
+    path: d:/logs/jces
+
+mail:
+  host: mail.eastcompeace.com
+  port: 25
+  user: kangjunrong@eastcompeace.com
+  password: ENC(HYtoIWQS4eCM2bt00qtP6w==)
+#加密前密码 ： 123456
+
+forum:
+   url:
+    admin: http://192.168.10.127:8033/forum/admin/thirdPartyLogin
+    developer: http://192.168.10.127:8033/forum/loginForThird
+
+param:
+  expFilePath: E:\\2020\\jces\\code\\cmcc\\tools\\Jces_ide_2.1.0\\simuls\\JCWDE\\api_export_files_cmcc
+  third:
+    uploadUrl: E:\\file-server\\cap\\
+    excel: F:\\develop\\cloud\\jces-server\\src\\main\\resources\\excel\\
+    reportPath: E:\\file-server\\report\\
+    downloadUrl: http://192.168.10.59:18030/jces-file/file/downloadReport?key=

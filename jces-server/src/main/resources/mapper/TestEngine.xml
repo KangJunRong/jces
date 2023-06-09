@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.terminal.TestEngineMapper">
+
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestEngineVo">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="ip" property="ip"/>
+        <result column="port" property="port"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="comm_date" property="commDate"/>
+        <result column="del_flg" property="delFlg"/>
+        <result column="create_date" property="createDate"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="ex_msg" property="exMsg"/>
+        <association property="updateUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u1_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+        <association property="createUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+          a.id as "id",
+          a.name as "name",
+          a.ip as "ip",
+          a.description as "description",
+          a.status as "status",
+          a.comm_date as "comm_date",
+          a.del_flg as "del_flg",
+          a.update_user as "u1_id",
+          a.update_date as "update_date",
+          a.create_user as "u_id",
+          a.create_date as "create_date",
+          a.port as "port",
+          a.ex_msg as "ex_msg"
+      </sql>
+    <sql id="Base_Joins">
+
+      </sql>
+
+    <select id="getById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from test_engine a
+        <include refid="Base_Joins"/>
+        where a.del_flg = 0
+        and a.id = #{id}
+    </select>
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from test_engine a
+        <include refid="Base_Joins"/>
+        <where>
+            a.del_flg = 0
+            <if test="name != null and name != ''">
+                and a.name like concat('%', #{name}, '%')
+            </if>
+            <if test="ip != null and ip != ''">
+                and a.ip like concat('%', #{ip}, '%')
+            </if>
+            <if test="description != null and description != ''">
+                and a.description like concat('%', #{description}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+        <if test="id != null and id != ''">
+            and a.id = #{id}
+        </if>
+            order by a.create_date DESC
+        </where>
+    </select>
+    <insert id="insert">
+        insert into test_engine(
+            id,
+            name,
+            ip,
+            description,
+            status,
+            comm_date,
+            del_flg,
+            update_user,
+            update_date,
+            create_user,
+            create_date,
+            port
+        )values(
+            #{id},
+            #{name},
+            #{ip},
+            #{description},
+            #{status},
+            #{commDate},
+            #{delFlg},
+            #{updateUser.id},
+            #{updateDate},
+            #{createUser.id},
+            #{createDate},
+            #{port}
+        )
+    </insert>
+
+    <update id="update">
+        update test_engine
+        <set>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="ip != null and ip != ''">
+                ip = #{ip},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="updateUser != null and updateUser.id != null and updateUser.id != ''">
+                update_user = #{updateUser.id},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate},
+            </if>
+            <if test="port != null and port != ''">
+                port = #{port},
+            </if>
+            <if test="commDate != null">
+                comm_date = #{commDate},
+            </if>
+            <if test="status != null and status != ''">
+                `status` = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+       delete from test_engine
+        where id = #{id}
+    </delete>
+
+    <update id="updateStatus">
+        update test_engine
+        <set>
+           status = #{status},
+            <if test="updateUser != null and updateUser.id != null and updateUser.id != ''">
+                update_user = #{updateUser.id},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate},
+            </if>
+            <if test="commDate != null">
+                comm_date = #{commDate},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="getByIp" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from test_engine a
+        <include refid="Base_Joins"/>
+        where a.del_flg = 0
+        and a.ip = #{ip} limit 1
+    </select>
+
+    <update id="setOffLine">
+        update test_engine set `status` = 2
+        where ( comm_date &lt; #{date} || comm_date is null)
+        and (`status`='1' or `status`='4') and del_flg = 0
+    </update>
+    <update id="checkOffLine">
+        UPDATE `test_engine`
+        SET `status` = '2'
+        WHERE
+            timestampdiff( SECOND, comm_date, now( ) ) &gt; #{offLineTime}
+          AND ( `status` = '1' OR `status` = '4' )
+    </update>
+    <update id="updateExMsg">
+        UPDATE `test_engine`
+        SET
+        <if test="exMsg != null">
+            ex_msg = #{exMsg}
+        </if>
+        <if test="exMsg == null">
+            ex_msg = null
+        </if>
+        where id = #{engineId}
+    </update>
+
+    <select id="getByName" resultMap="BaseResultMap">
+        select
+        a.*
+        from test_engine a
+        where a.del_flg = 0
+        and a.name = #{name}
+    </select>
+    <select id="findByMatrixId" resultMap="BaseResultMap">
+        SELECT b.* FROM `test_matrix` a
+        INNER join test_engine b on a.engine_id = b.id
+        where a.matrix_id = #{matrixId} and b.del_flg = 0
+    </select>
+</mapper>

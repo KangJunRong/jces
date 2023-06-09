@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.cos.VmCosDownloadMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.VmCosDownloadVo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="cos_version" jdbcType="VARCHAR" property="cosVersion"/>
+        <result column="cos_no" jdbcType="INTEGER" property="cosNo"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="download_type" jdbcType="INTEGER" property="downloadType"/>
+        <result column="download_time" jdbcType="TIMESTAMP" property="downloadTime"/>
+    </resultMap>
+
+    <select id="list" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        id,cos_version,cos_no,ip,download_type,download_time
+        from vm_download_log
+        <where>
+            1=1
+            <if test="ip!=null and ip!= ''">
+                and ip like concat ('%',#{ip},'%')
+            </if>
+            <if test="downloadType!=null and downloadType!=''">
+                and download_type = #{downloadType}
+            </if>
+            <if test="startTime!=null and endTime!=null ">
+                and download_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+        order by download_time desc
+    </select>
+
+    <insert id="add">
+        insert into vm_download_log (id, cos_version, cos_no, ip, download_type, download_time)
+        values (#{id,jdbcType=VARCHAR}, #{cosVersion,jdbcType=VARCHAR}, #{cosNo,jdbcType=VARCHAR},
+                #{ip,jdbcType=VARCHAR},
+                #{downloadType,jdbcType=INTEGER}, #{downloadTime,jdbcType=TIMESTAMP})
+    </insert>
+</mapper>

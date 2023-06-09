@@ -1,0 +1,13 @@
+param:
+  jces:
+    uploadUrl: /opt/jces/file-server/file/
+    #云平台地址
+    cloudServerUrl: http://localhost:8030/jces-server/
+    expFilePath: /opt/jces/cmcc
+spring:
+    application:
+        name: Jces File Server
+logging:
+  config: classpath:logback-spring.xml
+  file:
+    path: /opt/jces/file-server/logs/

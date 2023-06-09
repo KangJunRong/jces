@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.user.UserMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.UserVo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="roleId" jdbcType="VARCHAR" property="roleId"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="delFlg" jdbcType="INTEGER" property="delFlg"/>
+        <result column="updateUser" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="updateDate" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="createUser" jdbcType="VARCHAR" property="createUser"/>
+        <result column="createDate" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="forumPassword" jdbcType="VARCHAR" property="forumPassword"/>
+        <result column="voucher" jdbcType="VARCHAR" property="voucher"/>
+        <result column="template_id" jdbcType="VARCHAR" property="templateId"/>
+        <result column="licence_code_quota" jdbcType="INTEGER" property="licenceCodeQuota"/>
+        <association property="role" javaType="com.ecp.jces.vo.RoleVo" columnPrefix="role_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        a.id as "id",
+        a.name as "name",
+        a.account as "account",
+        a.password as "password",
+        a.email as "email",
+        a.description as "description",
+        a.role_id as "roleId",
+        a.status as "status",
+        a.del_flg as "delFlg",
+        a.update_user as "updateUser",
+        a.update_date as "updateDate",
+        a.create_user as "createUser",
+        a.create_date as "createDate",
+        role.id as "role_id",
+        role.name as "role_name",
+        a.licence_code_quota as "licence_code_quota",
+        a.forum_password as "forumPassword",
+        a.voucher as voucher,
+        a.phone as phone,
+        a.template_id as template_id
+    </sql>
+
+    <sql id="Base_Joins">
+        left join sys_role role on role.id = a.role_id
+    </sql>
+    <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user a
+        <include refid="Base_Joins"/>
+        where a.id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="add">
+        insert into sys_user (id, `name`, account, `password`,
+                              email, `description`, role_id,
+                              status, del_flg, update_user,
+                              update_date, create_user, create_date, licence_code_quota, forum_password, voucher, phone)
+        values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{password},
+                #{email,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR},
+                #{status,jdbcType=VARCHAR}, #{delFlg,jdbcType=INTEGER}, #{updateUser,jdbcType=VARCHAR},
+                #{updateDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
+                #{licenceCodeQuota,jdbcType=INTEGER},
+                #{forumPassword,jdbcType=VARCHAR}, #{voucher}, #{phone})
+    </insert>
+
+    <update id="edit">
+        update sys_user
+        <set>
+            <if test="name != null and name != '' ">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="account != null and account != '' ">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null and password != '' ">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null and email != '' ">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null and description != '' ">
+                `description` = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="roleId != null and roleId != '' ">
+                role_id = #{roleId,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null and status != '' ">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="updateUser != null and updateUser != '' ">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null and createUser != '' ">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="licenceCodeQuota != null">
+                licence_code_quota = #{licenceCodeQuota,jdbcType=INTEGER},
+            </if>
+            <if test="forumPassword != null and forumPassword != '' ">
+                forum_password = #{forumPassword},
+            </if>
+            <if test="voucher != null and voucher != '' ">
+                voucher = #{voucher},
+            </if>
+            <if test="phone != null and phone != '' ">
+                phone = #{phone},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <select id="list" resultMap="BaseResultMap">
+        select
+        a.id as "id",
+        a.name as "name",
+        a.account as "account",
+        a.email as "email",
+        a.description as "description",
+        a.role_id as "roleId",
+        a.status as "status",
+        a.del_flg as "delFlg",
+        a.update_date as "updateDate",
+        a.create_date as "createDate",
+        role.id as "role_id",
+        role.name as "role_name",
+        a.licence_code_quota as "licence_code_quota",
+        a.voucher as "voucher",
+        a.phone as "phone",
+        a.template_id as template_id
+        from sys_user a
+        <include refid="Base_Joins"/>
+        <where>
+            1 =1
+            <if test="name != null and name != '' ">
+                and a.name like concat('%', #{name}, '%')
+            </if>
+            <if test="account != null and account != '' ">
+                and a.account = #{account,jdbcType=VARCHAR}
+            </if>
+            <if test="email != null and email != '' ">
+                and a.email = #{email,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null and status != '' ">
+                and a.status = #{status,jdbcType=VARCHAR}
+            </if>
+            and a.del_flg = '0'
+            order by a.create_date desc
+        </where>
+    </select>
+    <select id="findByAccount" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user a
+        <include refid="Base_Joins"/>
+        where a.account = #{account} and a.del_flg = 0
+    </select>
+
+    <select id="login" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user a
+        <include refid="Base_Joins"/>
+        where a.account = #{account} and a.password = #{password}
+        and a.del_flg = #{delFlg}
+    </select>
+
+    <select id="userCreateCount" resultType="java.util.HashMap">
+        select DATE_FORMAT(create_date,'%m-%d') as "date",
+        count(*) as "number"
+        from sys_user
+        where
+        del_flg = 0
+        <if test="createDateStart != null">
+            and create_date &gt;= #{createDateStart}
+        </if>
+        <if test="createDateEnd != null">
+            and create_date &lt;= #{createDateEnd}
+        </if>
+        group by DATE_FORMAT(create_date,'%Y-%m-%d')
+        order by create_date ASC
+    </select>
+
+    <update id="delete">
+        update sys_user
+        set del_flg = #{delFlg}
+        where id = #{id}
+    </update>
+    <update id="setTemplateId">
+        update sys_user
+        set template_id = #{templateId}
+        where id = #{id}
+    </update>
+
+    <select id="isOldPasswordExist" resultType="java.lang.Boolean">
+        SELECT EXISTS
+        (
+        SELECT id FROM sys_user
+        <where>
+            del_flg= 0 AND id = #{id}
+            <if test="oldPassword != null and oldPassword != ''">
+                AND password = #{oldPassword}
+            </if>
+        </where>
+        )
+    </select>
+    <select id="findByAccountAndEmail" resultMap="BaseResultMap">
+        select *
+        from sys_user
+        where del_flg = 0
+          AND account = #{account}
+          and email = #{email} limit 1
+    </select>
+
+    <select id="findByVoucher" resultMap="BaseResultMap">
+        select *
+        from sys_user
+        where del_flg = 0
+          and voucher = #{voucher}
+    </select>
+
+    <select id="findByEmail" resultMap="BaseResultMap">
+        select * from sys_user where email = #{email}
+    </select>
+    <select id="findByPhone" resultMap="BaseResultMap">
+        select
+            a.id as "id",
+            a.name as "name",
+            a.account as "account",
+            a.email as "email",
+            a.description as "description",
+            a.role_id as "roleId",
+            a.status as "status",
+            a.del_flg as "delFlg",
+            a.update_date as "updateDate",
+            a.create_date as "createDate",
+            a.licence_code_quota as "licence_code_quota",
+            a.voucher as "voucher",
+            a.phone as "phone",
+            a.template_id
+        from sys_user a where a.phone = #{phone} and a.del_flg = 0
+    </select>
+    <select id="getTemplateId" resultType="java.lang.String">
+        select template_id from sys_user where id = #{id}
+    </select>
+
+</mapper>

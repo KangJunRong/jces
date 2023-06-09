@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.sys.SysConfigMapper">
+
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.SysConfigVo">
+        <id column="id" property="id" />
+        <result column="label" property="label" />
+        <result column="value" property="value" />
+        <result column="description" property="description" />
+        <result column="del_flg" property="delFlg" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+        <result column="type" property="type" />
+        <association property="updateUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u1_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+        <association property="createUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+          a.id as "id",
+          a.label as "label",
+          a.value as "value",
+          a.description as "description",
+          a.del_flg as "del_flg",
+          u1.id as "u1_id",
+          u1.name as "u1_name",
+          a.update_date as "update_date",
+          a.create_user as "u_id",
+          a.type as "type",
+          a.create_date as "create_date"
+      </sql>
+    <sql id="Base_Joins">
+          left join sys_user u1 on u1.id = a.update_user
+      </sql>
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from sys_config a
+        <include refid="Base_Joins" />
+        <where>
+            a.del_flg = 0
+            <if test="label != null and label != ''">
+                and a.label like concat('%', #{label}, '%')
+            </if>
+            order by a.create_date DESC
+        </where>
+    </select>
+    <insert id="insert">
+        insert into sys_config(
+            id,
+            label,
+            value,
+            description,
+            del_flg,
+            update_user,
+            update_date,
+            create_user,
+            create_date
+        )values(
+            #{id},
+            #{label},
+            #{value},
+            #{description},
+            #{delFlg},
+            #{updateUser.id},
+            #{updateDate},
+            #{createUser.id},
+            #{createDate}
+        )
+    </insert>
+
+    <update id="update">
+        update sys_config
+        <set>
+            <if test="label != null and label != '' ">
+                label = #{label},
+            </if>
+            <if test="value != null and value != '' ">
+                value = #{value},
+            </if>
+            <if test="description != null and description != '' ">
+                `description` = #{description},
+            </if>
+            <if test="updateUser != null and updateUser.id != null and updateUser.id != ''">
+                update_user = #{updateUser.id},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate},
+            </if>
+            <if test="createUser != null and createUser.id != null and createUser.id != ''">
+                create_user = #{createUser.id},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="delete">
+       update sys_config
+        set
+           del_flg = #{delFlg}
+        where id = #{id}
+    </update>
+
+    <select id="getByLabel" resultMap="BaseResultMap">
+        select * from sys_config
+        where del_flg = 0 and label = #{label}
+
+    </select>
+
+    <select id="selectAll" resultType="com.ecp.jces.vo.SysConfigVo">
+        select * from sys_config where del_flg = 0
+    </select>
+
+    <select id="list" resultType="com.ecp.jces.vo.SysConfigVo">
+        select * from sys_config where del_flg = 0 and `type` = #{type}
+    </select>
+    <select id="getValueByLabel" resultType="java.lang.String">
+        select `value` from sys_config
+        where del_flg = 0 and label = #{label}
+    </select>
+</mapper>

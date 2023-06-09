@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.terminal.TestCardMapper">
+
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestCardVo">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="model" property="model" />
+        <result column="description" property="description" />
+        <result column="status" property="status" />
+        <result column="del_flg" property="delFlg" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+        <association property="cardManufacturer" javaType="com.ecp.jces.vo.TestCardManufacturerVo" columnPrefix="cardManufacturer_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+        <association property="updateUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u1_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+        <association property="createUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+          a.id as "id",
+          a.name as "name",
+          a.model as "model",
+          a.description as "description",
+          a.status as "status",
+          a.del_flg as "del_flg",
+          a.update_user as "u1_id",
+          a.update_date as "update_date",
+          u.id as "u_id",
+          u.name as "u_name",
+          a.create_date as "create_date",
+          card_manufacturer.id as "cardManufacturer_id",
+          card_manufacturer.name as "cardManufacturer_name"
+      </sql>
+    <sql id="Base_Joins">
+          left join sys_user u on u.id = a.create_user
+          left join test_card_manufacturer card_manufacturer on card_manufacturer.id = a.manufacturer_id
+      </sql>
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from test_card a
+        <include refid="Base_Joins" />
+        <where>
+            a.del_flg = 0
+            <if test="name != null and name != ''">
+                and a.name like concat('%', #{name}, '%')
+            </if>
+            <if test="model != null and model != ''">
+                and a.model like concat('%', #{model}, '%')
+            </if>
+            <if test="cardManufacturer != null and cardManufacturer.id != null and cardManufacturer.id !=''">
+                and a.manufacturer_id = #{cardManufacturer.id}
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+            order by a.create_date DESC
+        </where>
+    </select>
+    <insert id="insert">
+        insert into test_card(
+            id,
+            name,
+            model,
+            manufacturer_id,
+            description,
+            status,
+            del_flg,
+            update_user,
+            update_date,
+            create_user,
+            create_date
+        )values(
+            #{id},
+            #{name},
+            #{model},
+            #{cardManufacturer.id},
+            #{description},
+            #{status},
+            #{delFlg},
+            #{updateUser.id},
+            #{updateDate},
+            #{createUser.id},
+            #{createDate}
+        )
+    </insert>
+
+    <update id="update">
+        update test_card
+        set
+           name = #{name},
+           model = #{model},
+           manufacturer_id = #{cardManufacturer.id},
+           description = #{description},
+           status = #{status},
+           update_user = #{updateUser.id},
+           update_date = #{updateDate}
+        where id = #{id}
+    </update>
+
+    <update id="delete">
+       update test_card
+        set
+           del_flg = #{delFlg}
+        where id = #{id}
+    </update>
+
+    <select id="findListByCardGroup" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from test_card a
+        <include refid="Base_Joins" />
+        join test_card_group_relate b on b.test_card_id = a.id
+        and a.del_flg = 0
+        and b.test_card_group_id = #{testCardGroupForm.id}
+        order by a.create_date DESC
+    </select>
+    <select id="findByManufacturerAndModel" resultMap="BaseResultMap">
+        select * from test_card where del_flg = 0 and  `model` = #{model} and
+           manufacturer_id = #{manufacturerId}
+    </select>
+
+    <select id="getByModelAndCardManufacturer" resultMap="BaseResultMap">
+        select * from test_card where del_flg = 0 and model = #{model} and manufacturer_id = #{cardManufacturer.id}
+    </select>
+
+    <select id="findById" resultMap="BaseResultMap">
+        select * from test_card where del_flg = 0 and id =#{id}
+    </select>
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.api.ApiForbiddenMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.ApiForbiddenVo">
+        <id column="id" jdbcType="VARCHAR" property="id"></id>
+        <result column="package_name" jdbcType="VARCHAR" property="packageName"/>
+        <result column="version_no" jdbcType="VARCHAR" property="versionNo"/>
+        <result column="class_name" jdbcType="VARCHAR" property="className"/>
+        <result column="method_name" jdbcType="VARCHAR" property="methodName"/>
+        <result column="descriptor" jdbcType="VARCHAR" property="descriptor"/>
+    </resultMap>
+
+    <select id="list" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id,package_name,version_no,class_name,method_name,`descriptor`
+        from api_forbidden
+        where
+        1 = 1
+        <if test="packageName != null and packageName != ''">
+            and package_name = #{packageName}
+        </if>
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        order by package_name asc
+    </select>
+
+    <delete id="reset">
+        truncate table api_forbidden;
+        truncate table api_role_link;
+    </delete>
+
+    <insert id="pushAll">
+        insert into api_forbidden (id,package_name,version_no,class_name,method_name,`descriptor`)
+        values
+        <foreach collection="list" item="lt" separator=",">
+            (#{lt.id},#{lt.packageName},#{lt.versionNo},#{lt.className},#{lt.methodName},#{lt.descriptor})
+        </foreach>
+    </insert>
+
+    <select id="getForbiddenByRoleId" resultMap="BaseResultMap">
+        select distinct a.package_name, a.version_no, a.class_name, a.method_name, a.`descriptor`
+        from api_forbidden as a
+        where id in (select forbidden_id from api_role_link where api_role_id = #{id})
+    </select>
+
+    <select id="getForbiddenByListId" resultMap="BaseResultMap">
+        select package_name,version_no,class_name,method_name,`descriptor` from api_forbidden where id in
+        <foreach collection="list" item="lt" open="(" close=")" separator=",">
+            #{lt}
+        </foreach>
+    </select>
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT
+            c.package_name,c.version_no,c.class_name,c.method_name,c.`descriptor`
+        FROM
+            `licence_code` a
+                INNER JOIN api_role_link b ON a.api_role_id = b.api_role_id
+                INNER JOIN api_forbidden c ON b.forbidden_id = c.id
+        WHERE
+            a.create_user = #{id}
+        GROUP BY
+            c.id
+    </select>
+
+</mapper>

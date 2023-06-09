@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.api.ApiForbiddenDefaultMapper">
+  <resultMap id="BaseResultMap" type="com.ecp.jces.vo.ApiForbiddenDefaultVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="package_name" jdbcType="VARCHAR" property="packageName" />
+    <result column="version_no" jdbcType="VARCHAR" property="versionNo" />
+    <result column="class_name" jdbcType="VARCHAR" property="className" />
+    <result column="method_name" jdbcType="VARCHAR" property="methodName" />
+    <result column="descriptor" jdbcType="VARCHAR" property="descriptor" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, package_name, version_no, class_name, method_name, `descriptor`
+  </sql>
+  <select id="list"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from api_forbidden_default order by package_name asc
+  </select>
+  <delete id="deleteAll">
+    delete from api_forbidden_default
+  </delete>
+  <insert id="insert" >
+    insert into api_forbidden_default (id, package_name, version_no, class_name, method_name, `descriptor`
+      )
+    values
+    <foreach collection="list" item="lt" separator=",">
+      (#{lt.id},#{lt.packageName},#{lt.versionNo},#{lt.className},#{lt.methodName},#{lt.descriptor})
+    </foreach>
+  </insert>
+
+</mapper>

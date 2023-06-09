@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.task.TestScheduleMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestScheduleVo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="test_task_id" jdbcType="VARCHAR" property="testTaskId"/>
+        <result column="test_engine_id" jdbcType="VARCHAR" property="testEngineId"/>
+        <result column="test_card_id" jdbcType="VARCHAR" property="testCardId"/>
+        <result column="test_engine_reader_id" jdbcType="VARCHAR" property="testEngineReaderId"/>
+        <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
+        <result column="test_start" jdbcType="TIMESTAMP" property="testStart"/>
+        <result column="test_end" jdbcType="TIMESTAMP" property="testEnd"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="del_flg" jdbcType="SMALLINT" property="delFlg"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="test_content" jdbcType="INTEGER" property="testContent"/>
+
+        <result column="error_info" jdbcType="VARCHAR" property="errorInfo"/>
+        <result column="business_log_path" jdbcType="VARCHAR" property="businessLogPath"/>
+    </resultMap>
+
+    <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select id, test_task_id, test_engine_id, test_card_id, test_engine_reader_id, schedule_date,
+    test_start, test_end, status, del_flg, update_user, update_date, create_user, create_date, test_content
+    from test_schedule
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+    <select id="list" resultMap="BaseResultMap">
+        select id, test_task_id, test_engine_id, test_card_id, test_engine_reader_id, schedule_date,
+        test_start, test_end, status, del_flg, update_user, update_date, create_user, create_date, test_content
+        from test_schedule
+        <where>
+            1=1
+            <if test="testEngineId != null and testEngineId != '' ">
+                and test_engine_id = #{testEngineId,jdbcType=VARCHAR}
+            </if>
+            <if test="testTaskId != null and testTaskId != '' ">
+                and test_task_id = #{testTaskId}
+            </if>
+            <if test="status != null and status != '' ">
+                and status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="delFlg != null">
+                and del_flg = #{delFlg,jdbcType=SMALLINT}
+            </if>
+            <if test="createUser != null and createUser != '' ">
+                and create_user = #{createUser,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+        order by create_date asc
+    </select>
+    <delete id="del" parameterType="java.lang.String">
+    delete from test_schedule
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="add" parameterType="com.ecp.jces.form.TestScheduleForm">
+    insert into test_schedule (id, test_task_id, test_engine_id, 
+      test_card_id, test_engine_reader_id, schedule_date, 
+      test_start, test_end, status, 
+      del_flg, update_user, update_date, 
+      create_user, create_date, test_content)
+    values (#{id,jdbcType=VARCHAR}, #{testTaskId,jdbcType=VARCHAR}, #{testEngineId,jdbcType=VARCHAR}, 
+      #{testCardId,jdbcType=VARCHAR}, #{testEngineReaderId,jdbcType=VARCHAR}, #{scheduleDate,jdbcType=TIMESTAMP}, 
+      #{testStart,jdbcType=TIMESTAMP}, #{testEnd,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, 
+      #{delFlg,jdbcType=SMALLINT}, #{updateUser,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{testContent})
+  </insert>
+    <insert id="adds">
+        insert into test_schedule (id, test_task_id, test_engine_id,
+        test_card_id, test_engine_reader_id, schedule_date,
+        test_start, test_end, status,
+        del_flg, update_user, update_date,
+        create_user, create_date, test_content)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id,jdbcType=VARCHAR}, #{item.testTaskId,jdbcType=VARCHAR}, #{item.testEngineId,jdbcType=VARCHAR},
+            #{item.testCardId,jdbcType=VARCHAR}, #{item.testEngineReaderId,jdbcType=VARCHAR}, #{item.scheduleDate,jdbcType=TIMESTAMP},
+            #{item.testStart,jdbcType=TIMESTAMP}, #{item.testEnd,jdbcType=TIMESTAMP}, #{item.status,jdbcType=VARCHAR},
+            #{item.delFlg,jdbcType=SMALLINT}, #{item.updateUser,jdbcType=VARCHAR}, #{item.updateDate,jdbcType=TIMESTAMP},
+            #{item.createUser,jdbcType=VARCHAR}, #{item.createDate,jdbcType=TIMESTAMP}, #{item.testContent})
+        </foreach>
+    </insert>
+    <insert id="addLog">
+        insert into test_business_log (id, test_schedule_id, business_log_path, error_info)
+        values (#{id}, #{scheduleId}, #{customizeLogPath}, #{errorInfo})
+    </insert>
+
+    <update id="edit" parameterType="com.ecp.jces.form.TestScheduleForm">
+        update test_schedule
+        <set>
+            <if test="testTaskId != null and testTaskId != '' ">
+                test_task_id = #{testTaskId,jdbcType=VARCHAR},
+            </if>
+            <if test="testEngineId != null and testEngineId != '' ">
+                test_engine_id = #{testEngineId,jdbcType=VARCHAR},
+            </if>
+            <if test="testCardId != null and testCardId != '' ">
+                test_card_id = #{testCardId,jdbcType=VARCHAR},
+            </if>
+            <if test="testEngineReaderId != null and testEngineReaderId != '' ">
+                test_engine_reader_id = #{testEngineReaderId,jdbcType=VARCHAR},
+            </if>
+            <if test="scheduleDate != null and scheduleDate != '' ">
+                schedule_date = #{scheduleDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="testStart != null">
+                test_start = #{testStart,jdbcType=TIMESTAMP},
+            </if>
+            <if test="testEnd != null">
+                test_end = #{testEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null and status != '' ">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlg != null and delFlg != '' ">
+                del_flg = #{delFlg,jdbcType=SMALLINT},
+            </if>
+            <if test="updateUser != null and updateUser != '' ">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null and updateDate != '' ">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null and createUser != '' ">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null and createDate != '' ">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="changeStatus" parameterType="com.ecp.jces.form.TestScheduleForm">
+        update test_schedule
+        <set>
+            status = '1'
+        </set>
+        where test_task_id = #{taskId,jdbcType=VARCHAR} and status = '0'
+    </update>
+
+    <select id="findByTestTaskId" resultMap="BaseResultMap">
+        select a.test_card_id,a.test_engine_reader_id,a.status, b.business_log_path, b.error_info from test_schedule as a
+            left join test_business_log as b on a.id = b.test_schedule_id where test_task_id in
+        (select id from test_task where test_business_script_id = #{testBusinessScriptId} and `type` = '2')
+    </select>
+</mapper>

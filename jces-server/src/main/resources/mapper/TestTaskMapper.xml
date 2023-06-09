@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.task.TestTaskMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestTaskVo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="applet_id" jdbcType="VARCHAR" property="appletId"/>
+        <result column="applet_version_id" jdbcType="VARCHAR" property="appletVersionId"/>
+        <result column="test_script_id" jdbcType="VARCHAR" property="testScriptId"/>
+        <result column="test_business_script_id" jdbcType="VARCHAR" property="testBusinessScriptId"/>
+        <result column="test_card_group_id" jdbcType="VARCHAR" property="testCardGroupId"/>
+        <result column="test_start" jdbcType="TIMESTAMP" property="testStart"/>
+        <result column="test_end" jdbcType="TIMESTAMP" property="testEnd"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="del_flg" jdbcType="SMALLINT" property="delFlg"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="version_no" jdbcType="VARCHAR" property="versionNo"/>
+        <result column="matrix_id" jdbcType="VARCHAR" property="matrixId"/>
+        <result column="param_test" jdbcType="BIT" property="paramTest"/>
+    </resultMap>
+
+    <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select  id, `type`, applet_id, applet_version_id, test_script_id, test_business_script_id, test_card_group_id,
+    test_start, test_end, status, del_flg, update_user, update_date, create_user, create_date, param_test, matrix_id
+    from test_task
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        select a.*, b.version_no
+        from test_task a inner join applet b
+        on a.applet_id = b.id
+        <where>
+            1=1
+            <if test="appletId != null and appletId != '' ">
+                and a.applet_id = #{appletId}
+            </if>
+            <if test="status != null and status != '' ">
+                and a.status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="delFlg != null">
+                and a.del_flg = #{delFlg,jdbcType=SMALLINT}
+            </if>
+            <if test="createUser != null and createUser != '' ">
+                and a.create_user = #{createUser,jdbcType=VARCHAR}
+            </if>
+            <if test="testScriptId != null and testScriptId != '' ">
+                and a.test_script_id = #{testScriptId,jdbcType=VARCHAR}
+            </if>
+            <if test="testBusinessScriptId != null and testBusinessScriptId != ''">
+                and a.test_business_script_id = #{testBusinessScriptId,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by a.create_date desc
+    </select>
+
+    <delete id="del" parameterType="java.lang.String">
+    delete from test_task
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+
+    <insert id="add" parameterType="com.ecp.jces.form.TestTaskForm">
+    insert into test_task (id, `type`, applet_id,
+      applet_version_id, test_script_id, test_business_script_id,
+      test_card_group_id, test_start, test_end,
+      status, del_flg, update_user,
+      update_date, create_user, create_date, time_out
+      )
+    values (#{id,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{appletId,jdbcType=VARCHAR},
+      #{appletVersionId,jdbcType=VARCHAR}, #{testScriptId,jdbcType=VARCHAR}, #{testBusinessScriptId,jdbcType=VARCHAR},
+      #{testCardGroupId,jdbcType=VARCHAR}, #{testStart,jdbcType=TIMESTAMP}, #{testEnd,jdbcType=TIMESTAMP},
+      #{status,jdbcType=VARCHAR}, #{delFlg,jdbcType=SMALLINT}, #{updateUser,jdbcType=VARCHAR},
+      #{updateDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
+      #{timeOut}
+      )
+  </insert>
+
+    <update id="edit" parameterType="com.ecp.jces.form.TestTaskForm">
+        update test_task
+        <set>
+            <if test="appletId != null and appletId != '' ">
+                applet_id = #{appletId,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null and type != '' ">
+                `type` = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="appletVersionId != null and appletVersionId != '' ">
+                applet_version_id = #{appletVersionId,jdbcType=VARCHAR},
+            </if>
+            <if test="testScriptId != null and testScriptId != '' ">
+                test_script_id = #{testScriptId,jdbcType=VARCHAR},
+            </if>
+            <if test="testBusinessScriptId != null and testBusinessScriptId != '' ">
+                test_business_script_id = #{testBusinessScriptId,jdbcType=VARCHAR},
+            </if>
+            <if test="testCardGroupId != null and testCardGroupId != '' ">
+                test_card_group_id = #{testCardGroupId,jdbcType=VARCHAR},
+            </if>
+            <if test="testStart != null">
+                test_start = #{testStart,jdbcType=TIMESTAMP},
+            </if>
+            <if test="testEnd != null">
+                test_end = #{testEnd,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null and status != '' ">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlg != null and delFlg != '' ">
+                del_flg = #{delFlg,jdbcType=SMALLINT},
+            </if>
+            <if test="updateUser != null and updateUser != '' ">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null and updateDate != '' ">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null and createUser != '' ">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null and createDate != '' ">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="matrixId != null and matrixId != '' ">
+                matrix_id = #{matrixId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="editForStart" parameterType="com.ecp.jces.form.TestTaskForm">
+        update test_task
+        <set>
+            status = #{status} ,matrix_id = #{matrixId},
+            <if test="testStart != null">
+              test_start = #{testStart,jdbcType=TIMESTAMP}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="uploadProgress">
+        update test_task set rate = #{rate}
+        where id = #{id}
+    </update>
+    <update id="updateParamTest">
+        update test_task set param_test = true, `status` = '1', `rate` = 0, test_end = null
+        where id = #{id}
+    </update>
+
+    <select id="testTaskCreateCount" resultType="java.util.HashMap">
+        select DATE_FORMAT(create_date,'%m-%d') as "date",
+        count(*) as "number"
+        from test_task
+        where
+        del_flg = 0
+        <if test="createDateStart != null">
+            and create_date &gt;= #{createDateStart}
+        </if>
+        <if test="createDateEnd != null">
+            and create_date &lt;= #{createDateEnd}
+        </if>
+        group by DATE_FORMAT(create_date,'%Y-%m-%d')
+        order by create_date ASC
+    </select>
+
+    <select id="testTaskStatusCount" resultType="java.util.HashMap">
+        select
+        status as "status",
+        count(*) as "number"
+        from test_task
+        where
+        del_flg = 0
+        <if test="updateDateStart != null">
+            and update_date &gt;= #{updateDateStart}
+        </if>
+        <if test="updateDateEnd != null">
+            and update_date &lt;= #{updateDateEnd}
+        </if>
+        group by status
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(1)
+        from test_task
+        <where>
+            1=1
+            <if test="appletId != null and appletId != '' ">
+                and applet_id = #{appletId}
+            </if>
+            <if test="status != null and status != '' ">
+                and status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="delFlg != null">
+                and del_flg = #{delFlg,jdbcType=SMALLINT}
+            </if>
+            <if test="createUser != null and createUser != '' ">
+                and create_user = #{createUser,jdbcType=VARCHAR}
+            </if>
+            <if test="testScriptId != null and testScriptId != '' ">
+                and test_script_id = #{testScriptId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    <select id="findByApplet" resultMap="BaseResultMap">
+        select * from test_task
+        where applet_id = #{id} and applet_version_id = #{versionId} and `type` = '1'
+    </select>
+
+    <select id="timeOutList" resultMap="BaseResultMap">
+        SELECT * FROM `test_task` where `type` = '1'
+            and TIMESTAMPDIFF(MINUTE, test_start, NOW()) &gt; time_out
+            AND  (rate &lt; 100 or rate is null )
+            and test_end is null;
+    </select>
+    <select id="diSumTime" resultType="java.lang.Double">
+        SELECT
+            round( sum( k.time ), 3 ) time
+        FROM
+            (
+            SELECT
+            max( JSONArraySum ( JSON_EXTRACT( list, ( '$[*].time' ) ) ) ) AS time,
+            b.`type`
+            FROM
+            test_schedule a
+            LEFT JOIN `test_report_apdu` b ON a.id = b.test_schedule_id
+            WHERE
+            a.test_task_id = #{testTaskId}
+            AND ( b.`type` = 'download' OR b.`type` = 'install' )
+            GROUP BY
+            b.`type`
+            ) k
+    </select>
+    <select id="downloadMaxTime" resultType="java.lang.Double">
+        SELECT
+            MAX( JSONArrayMax ( JSON_EXTRACT( list, ( '$[*].time' ) ) ) ) AS t
+        FROM
+            test_schedule a
+                LEFT JOIN `test_report_apdu` b ON a.id = b.test_schedule_id
+        WHERE
+            a.test_task_id = #{testTaskId}
+          AND b.`type` = 'download';
+    </select>
+
+</mapper>

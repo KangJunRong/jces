@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.api.ApiLinkMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.ApiLinkVo">
+        <id column="id" jdbcType="VARCHAR" property="id"></id>
+        <result column="api_role_id" jdbcType="VARCHAR" property="apiRoleId"/>
+        <result column="forbidden_id" jdbcType="VARCHAR" property="forbiddenId"/>
+    </resultMap>
+
+    <select id="getForbiddenByRole" resultMap="BaseResultMap">
+        select *
+        from api_role_link
+        where api_role_id = #{apiRoleId}
+    </select>
+
+    <delete id="getNew">
+        delete
+        from api_role_link
+        where api_role_id = #{apiRoleId}
+    </delete>
+
+    <insert id="pushLink">
+        insert into api_role_link (id,api_role_id,forbidden_id)
+        values
+        <foreach collection="idList" item="idl" separator=",">
+            (#{idl.id},#{apiRoleId},#{idl.forbiddenId})
+        </foreach>
+    </insert>
+</mapper>

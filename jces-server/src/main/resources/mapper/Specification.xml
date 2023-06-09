@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.specification.SpecificationMapper">
+
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.SpecificationVo">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="description" property="description" />
+        <result column="download_times" property="downloadTimes" />
+        <result column="download_date" property="downloadDate" />
+        <result column="status" property="status" />
+        <result column="path" property="path" />
+        <result column="del_flg" property="delFlg" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+        <association property="updateUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u1_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+        <association property="createUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+          a.id as "id",
+          a.name as "name",
+          a.description as "description",
+          a.download_times as "download_times",
+          a.download_date as "download_date",
+          a.path as "path",
+          a.status as "status",
+          a.del_flg as "del_flg",
+          a.update_user as "u1_id",
+          a.update_date as "update_date",
+          a.create_user as "u.id",
+          a.create_date as "create_date"
+      </sql>
+    <sql id="Base_Joins">
+      </sql>
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from specification a
+        <include refid="Base_Joins" />
+        <where>
+            a.del_flg = 0
+            <if test="name != null and name != ''">
+                and a.name like concat('%', #{name}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+            order by a.create_date DESC
+        </where>
+    </select>
+    <insert id="insert">
+        insert into specification(
+            id,
+            name,
+            description,
+            download_times,
+            download_date,
+            path,
+            status,
+            del_flg,
+            update_user,
+            update_date,
+            create_user,
+            create_date
+        )values(
+            #{id},
+            #{name},
+            #{description},
+            #{downloadTimes},
+            #{downloadDate},
+            #{path},
+            #{status},
+            #{delFlg},
+            #{updateUser.id},
+            #{updateDate},
+            #{createUser.id},
+            #{createDate}
+        )
+    </insert>
+
+    <update id="updateStatus">
+        update specification
+        set
+           status = #{status},
+           update_user = #{updateUser.id},
+           update_date = #{updateDate}
+        where id = #{id}
+    </update>
+
+    <update id="delete">
+       update specification
+        set
+           del_flg = #{delFlg}
+        where id = #{id}
+    </update>
+
+    <update id="downloadUpdate">
+        update specification
+        set
+           download_times = download_times + 1,
+           download_date = now()
+        where id = #{id}
+    </update>
+
+    <select id="get" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from specification a
+        where a.id = #{id}
+    </select>
+
+
+</mapper>

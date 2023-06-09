@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.sys.IdeLogMsgMapper">
+  <resultMap id="BaseResultMap" type="com.ecp.jces.vo.IdeLogMsgVo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="machine_code" jdbcType="VARCHAR" property="machineCode" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="time" jdbcType="VARCHAR" property="time" />
+    <result column="message" jdbcType="VARCHAR" property="message" />
+    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, ip, machine_code, `type`, `time`, message, upload_time
+  </sql>
+  <select id="findById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ide_log_msg
+    where id = #{id}
+  </select>
+  <select id="list" parameterType="com.ecp.jces.form.IdeLogMsgForm" resultMap="BaseResultMap">
+    select id, ip, machine_code, `type`, `time`, upload_time from ide_log_msg
+    <where>
+      1=1
+      <if test="type != null">
+        and `type` = #{type}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and upload_time between #{startTime} and #{endTime}
+      </if>
+    </where>
+    order by id desc
+  </select>
+  <delete id="delete" parameterType="java.lang.Long">
+    delete from ide_log_msg
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.ecp.jces.form.IdeLogMsgForm">
+    insert into ide_log_msg (ip, machine_code, `type`, `time`, message, upload_time
+      )
+    values (#{ip}, #{machineCode}, #{type}, #{time}, #{message}, #{uploadTime}
+      )
+  </insert>
+  <insert id="adds">
+    insert into ide_log_msg (ip, machine_code, `type`, `time`, message, upload_time)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{ip}, #{item.machineCode}, #{item.type}, #{item.time}, #{item.message}, #{uploadTime})
+    </foreach>
+  </insert>
+
+
+</mapper>

@@ -1,0 +1,43 @@
+spring:
+  profiles:
+     active: dev
+   #出现错误时, 直接抛出异常
+  mvc:
+     throw-exception-if-no-handler-found: true
+   #不要为工程中的资源文件建立映射
+  jackson:
+    time-zone: GMT+8
+  web:
+    resources:
+      add-mappings: false
+
+server:
+  port: 8030
+  servlet:
+    context-path: /jces-server
+  tomcat:
+    uri-encoding: UTF-8
+    #最大链接数
+    max-connections: 1000
+    #最大等待队列长度
+    accept-count: 500
+
+mybatis:
+  type-aliases-package: com.ecp.jces.dc.model
+  mapper-locations: classpath:mapper/*.xml
+  configLocation: classpath:mybatis-config.xml
+
+##开发者账号在同一时间内最多能提交多少个测试限制(默认10个)
+applet:
+    test:
+      commitTestMax: 10
+
+#统一平台地址
+internet-platform:
+    unified-platform-url: https://xxx/manage/api/v1/validateAccessToken
+    point: researchHome2022@test
+    publicKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCKaHugW3mdLrxf2C0aS+HeNNqlG3oJgkX4Z56VEw5ir9ZEGpwLGUR1TDHz8+Un+I4NwuyB+Vy3elJy3t8dAVOket/6Y2OkRrq0LoS4fCHi59MttArQpkdL5at0b/AWRyXskQ/6tJTB3bvY11Lzy5gvcujCwA7IThyUDM/utLnEUQIDAQAB
+
+
+PRIVATE_KEY:
+  MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJy/DuXHNe7IMTbLnjgVtNf5bekHehPR1r1ElVVbJnHDUXFJyFjRGC8/tMTmFoH6vEPuoVyavOqF0EsNn3DQNtrWOcYd6bLSO+0HG+FA/rWtrmBkTlszfkHGa7chOYs0ioHjnazBhfHxnju0AqaJulb+zdGR3ESUzG846X8kCW67AgMBAAECgYEAmOGctS7tAp3NqoVFJ6y8O16z/fJl9kjXqrjm8l66C4GWwOlW+JHQhd0cAmPslhApahSo2/qswg2MEHgUB+N9a8AF7qauGbLC3fVlf2kUZXnYE2U0Ag27YwBeYZyDnjTQ1mpPbrcQaThtuCPyEWydtL/nQxpe4IdOmdoUPdZVUeECQQDk1pgdyDfjSQQXDogI18R42T+YAdgpWlJqWKM/rzfa+zskHabp/daIh6i8qflKEFBNRiVzMF8REworvNfXajQxAkEAr1nmy057dGAT6egfkum1Wf4Aabcvv/WDx6RLAWcabQP4svkl8pOYmw3ZWrt0BPFy55Sk8swh+v6yFXXVCZcyqwJBALlQTr9PdHLKnlVNnzwJ/0EeLTGbzMEwM62LOihIbKMY8Du/B3xV43WM5khiHU6tB1qMg6dUdKgPEx14QBJiHwECQD2WS9NYS1ACdrwOxRgqcYGcDrUSm/jF2HUEJTvm5Icpf+4MR+G9KTo8UPznHcamrv7bXFvSipTHY/DZo+tsaWUCQCcYMhVqzoxKGzGEnqCRV01VhjX1PepE4aQnP4EYSJ6tij3sDM0MT9AatY+eKA4SXYuqWnSb6XGDuSuH68jcTkA=

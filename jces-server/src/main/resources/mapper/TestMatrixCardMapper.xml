@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.terminal.TestMatrixCardMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestMatrixCardVo">
+        <id column="id" jdbcType="VARCHAR" property="id"></id>
+        <result column="matrix_id" jdbcType="VARCHAR" property="matrixId"/>
+        <result column="card_type_name" jdbcType="VARCHAR" property="cardTypeName"/>
+        <result column="reader_name" jdbcType="VARCHAR" property="readerName"/>
+        <result column="shorter_name" jdbcType="VARCHAR" property="shorterName"/>
+        <result column="reader_status" jdbcType="VARCHAR" property="readerStatus"/>
+        <result column="engine_id" jdbcType="VARCHAR" property="engineId"/>
+    </resultMap>
+
+    <insert id="add">
+        insert into test_matrix_card(id,matrix_id,card_type_name,reader_name,shorter_name,reader_status,engine_id)
+        values
+        <foreach collection="list" item="lt" separator=",">
+            (#{lt.id},#{lt.matrixId},#{lt.cardTypeName},#{lt.readerName},#{lt.shorterName},#{lt.readerStatus},#{lt.engineId})
+        </foreach>
+    </insert>
+
+
+    <select id="findByMatrix" resultMap="BaseResultMap">
+        select *
+        from test_matrix_card
+        where matrix_id = #{id}
+    </select>
+
+    <delete id="deleteByMatrixId">
+        delete
+        from test_matrix_card
+        where matrix_id = #{id}
+    </delete>
+</mapper>

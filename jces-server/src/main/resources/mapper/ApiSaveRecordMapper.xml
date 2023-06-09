@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.api.ApiSaveRecordMapper">
+  <resultMap id="BaseResultMap" type="com.ecp.jces.vo.ApiSaveRecordVo">
+    <id column="task_id" jdbcType="VARCHAR" property="taskId" />
+    <result column="apis" jdbcType="VARCHAR" property="apis" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    task_id, apis, create_date
+  </sql>
+  <select id="findByTaskId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from api_forbidden_save_record
+    where task_id = #{taskId}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from api_forbidden_save_record
+    where task_id = #{taskId}
+  </delete>
+  <insert id="insert" parameterType="com.ecp.jces.form.ApiSaveRecordForm">
+    insert into api_forbidden_save_record (task_id, apis, create_date)
+    values (#{taskId}, #{apis}, #{createDate})
+  </insert>
+
+</mapper>

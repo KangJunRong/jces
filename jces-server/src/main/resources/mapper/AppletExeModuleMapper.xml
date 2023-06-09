@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.applet.AppletExeModuleMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.AppletExeModuleVo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="load_file_id" jdbcType="VARCHAR" property="loadFileId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="aid" jdbcType="VARCHAR" property="aid"/>
+        <result column="instance_aid" jdbcType="VARCHAR" property="instanceAid"/>
+        <result column="del_flg" jdbcType="SMALLINT" property="delFlg"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    </resultMap>
+
+    <resultMap id="moduleMap" type="com.ecp.jces.vo.AppletExeModuleVo">
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="load_file_id" jdbcType="VARCHAR" property="loadFileId"/>
+        <result column="aid" jdbcType="VARCHAR" property="moduleAid"/>
+        <collection property="instanceVoList"
+                    ofType="com.ecp.jces.vo.AppletInstanceVo"
+                    column="{id=id,loadFileId=load_file_id}"
+                    select="getInstances">
+        </collection>
+    </resultMap>
+
+    <resultMap id="instanceMap" type="com.ecp.jces.vo.AppletInstanceVo">
+        <result column="instance_id" jdbcType="VARCHAR" property="instanceId"/>
+        <result column="instance_aid" jdbcType="VARCHAR" property="instanceAid"/>
+        <result column="install_param" jdbcType="VARCHAR" property="installParam"/>
+    </resultMap>
+
+    <select id="getInstances" resultType="com.ecp.jces.vo.AppletInstanceVo">
+        select instance_aid as instanceAid,id as instanceId, install_param as installParam
+        from applet_instance
+        where load_file_id = #{loadFileId} and module_id = #{id}
+  </select>
+
+    <delete id="del" parameterType="java.lang.String">
+    delete from applet_exe_module
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+    <insert id="add" parameterType="com.ecp.jces.form.AppletExeModuleForm">
+    insert into applet_exe_module (id, load_file_id, `name`,
+      aid, instance_aid, del_flg, 
+      update_user, update_date, create_user, 
+      create_date)
+    values (#{id,jdbcType=VARCHAR}, #{loadFileId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{aid,jdbcType=VARCHAR}, #{instanceAid,jdbcType=VARCHAR}, #{delFlg,jdbcType=SMALLINT}, 
+      #{updateUser,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="addInstance" parameterType="com.ecp.jces.form.AppletInstanceForm">
+      insert into applet_instance (id, load_file_id, module_id, load_file_aid, module_aid, instance_aid,
+      install_param, del_flg, update_user, update_date, create_user, create_date
+      )
+    values (#{id}, #{loadFileId}, #{moduleId}, #{loadFileAid}, #{moduleAid}, #{instanceAid},
+      #{installParam}, #{delFlg}, #{updateUser}, #{updateDate}, #{createUser}, #{createDate}
+      )
+    </insert>
+
+    <update id="edit" parameterType="com.ecp.jces.form.AppletExeModuleForm">
+        update applet_exe_module
+        <set>
+            <if test="loadFileId != null and loadFileId != '' ">
+                load_file_id = #{loadFileId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null and name != '' ">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="aid != null and aid != '' ">
+                aid = #{aid,jdbcType=VARCHAR},
+            </if>
+            <if test="instanceAid != null and instanceAid != '' ">
+                instance_aid = #{instanceAid,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlg != null">
+                del_flg = #{delFlg,jdbcType=SMALLINT},
+            </if>
+            <if test="updateUser != null and updateUser != '' ">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateInstanceInstallParam">
+        update applet_instance set install_param = #{installParam} where id = #{id}
+    </update>
+
+</mapper>

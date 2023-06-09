@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.terminal.TestCardGroupMapper">
+
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestCardGroupVo">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="description" property="description" />
+        <result column="status" property="status" />
+        <result column="del_flg" property="delFlg" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+        <association property="updateUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u1_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+        <association property="createUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+        <collection property="cardList" ofType="com.ecp.jces.vo.TestCardVo" columnPrefix="card_">
+            <id column="id" property="id" />
+        </collection>
+    </resultMap>
+    <sql id="Base_Column_List">
+          a.id as "id",
+          a.name as "name",
+          a.description as "description",
+          a.status as "status",
+          a.del_flg as "del_flg",
+          a.update_user as "u1_id",
+          a.update_date as "update_date",
+          u.id as "u_id",
+          u.name as "u_name",
+          a.create_date as "create_date"
+      </sql>
+    <sql id="Base_Joins">
+          left join sys_user u on u.id = a.create_user
+      </sql>
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from test_card_group a
+        <include refid="Base_Joins" />
+        <where>
+            a.del_flg = 0
+            <if test="name != null and name != ''">
+                and a.name like concat('%', #{name}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+            order by a.create_date DESC
+        </where>
+    </select>
+    <insert id="insert">
+        insert into test_card_group(
+            id,
+            name,
+            description,
+            status,
+            del_flg,
+            update_user,
+            update_date,
+            create_user,
+            create_date
+        )values(
+            #{id},
+            #{name},
+            #{description},
+            #{status},
+            #{delFlg},
+            #{updateUser.id},
+            #{updateDate},
+            #{createUser.id},
+            #{createDate}
+        )
+    </insert>
+
+    <update id="update">
+        update test_card_group
+        set
+           name = #{name},
+           description = #{description},
+           update_user = #{updateUser.id},
+           update_date = #{updateDate}
+        where id = #{id}
+    </update>
+
+    <update id="delete">
+       update test_card_group
+        set
+           del_flg = #{delFlg}
+        where id = #{id}
+    </update>
+
+    <select id="getById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />,
+        relate.test_card_id as "card_id"
+        from
+           test_card_group a
+        <include refid="Base_Joins" />
+        LEFT JOIN test_card_group_relate relate ON relate.test_card_group_id = a.id
+        where a.id = #{id}
+    </select>
+
+    <update id="updateStatus">
+        update test_card_group
+        set
+           status = #{status},
+           update_user = #{updateUser.id},
+           update_date = #{updateDate}
+        where id = #{id}
+    </update>
+
+    <update id="changeOtherActiveStatusToPublishStatus">
+        update test_card_group
+        set
+           status = '1',
+           update_user = #{updateUser.id},
+           update_date = #{updateDate}
+        where id != #{id} and status = '2' and del_flg = 0
+    </update>
+
+    <select id="getByName" resultMap="BaseResultMap">
+        select
+        a.*
+        from test_card_group a
+        where a.del_flg = 0 and a.name = #{name}
+    </select>
+
+</mapper>

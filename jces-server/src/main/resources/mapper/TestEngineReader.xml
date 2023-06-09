@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.terminal.TestEngineReaderMapper">
+
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestEngineReaderVo">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="description" property="description" />
+        <result column="status" property="status" />
+        <result column="delFlg" property="delFlg" />
+        <result column="createDate" property="createDate" />
+        <result column="updateDate" property="updateDate" />
+        <association property="testEngine" javaType="com.ecp.jces.vo.TestEngineVo" columnPrefix="testEngine_">
+            <id column="id" property="id"/>
+        </association>
+        <association property="bindCard" javaType="com.ecp.jces.vo.TestCardVo" columnPrefix="testCard_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+            <result column="model" property="model"/>
+            <association property="cardManufacturer"
+                         javaType="com.ecp.jces.vo.TestCardManufacturerVo" columnPrefix="cardManufacturer_">
+                <id column="id" property="id"/>
+                <result column="name" property="name"/>
+                <result column="code" property="code"/>
+            </association>
+        </association>
+        <association property="updateUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u1_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+        <association property="createUser" javaType="com.ecp.jces.vo.UserVo" columnPrefix="u_">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+          a.test_engine_id as "testEngine_id",
+          a.id as "id",
+          a.name as "name",
+          a.description as "description",
+          testCard.id as "testCard_id",
+          testCard.name as "testCard_name",
+          testCard.model as "testCard_model",
+          cardManufacturer.id as "testCard_cardManufacturer_id",
+          cardManufacturer.name as "testCard_cardManufacturer_name",
+          cardManufacturer.code as "testCard_cardManufacturer_code",
+          a.status as "status",
+          a.del_flg as "delFlg",
+          a.update_user as "u1_id",
+          a.update_date as "updateDate",
+          a.create_user as "u_id",
+          a.create_date as "createDate"
+      </sql>
+    <sql id="Base_Joins">
+          left join test_card testCard on testCard.id = a.bind_card_id
+          left join test_card_manufacturer cardManufacturer on testCard.manufacturer_id = cardManufacturer.id
+      </sql>
+
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from test_engine_reader a
+        <include refid="Base_Joins" />
+        <where>
+            a.del_flg = 0
+            <if test="testEngine != null and testEngine.id != null and testEngine.id != ''">
+                and a.test_engine_id = #{testEngine.id}
+            </if>
+            <if test="status != null and status != ''">
+                and a.status = #{status}
+            </if>
+            order by a.status DESC, a.create_date DESC
+        </where>
+    </select>
+    <update id="bindCard">
+        update test_engine_reader
+        set
+           bind_card_id = #{testCardId}
+        where id = #{id}
+    </update>
+
+    <update id="unbindCard">
+        update test_engine_reader
+        set
+           bind_card_id = null
+        where id = #{id}
+    </update>
+    <update id="setOffStatusByEngineId">
+        update test_engine_reader
+        set status = #{status}
+        where test_engine_id = #{engineId} and del_flg = 0
+    </update>
+
+    <select id="findByEngineIdAndName" resultMap="BaseResultMap">
+        select * from test_engine_reader
+        where `name` = #{name} and test_engine_id = #{engineId} and del_flg = 0 limit 1
+    </select>
+
+    <insert id="add" parameterType="com.ecp.jces.form.TestEngineReaderForm">
+    insert into test_engine_reader (id, test_engine_id, name,
+      description, bind_card_id, status,
+      del_flg, update_user, update_date,
+      create_user, create_date)
+    values (#{id,jdbcType=VARCHAR}, #{testEngine.id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+      #{description,jdbcType=VARCHAR}, #{bindCard.id,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+      #{delFlg,jdbcType=SMALLINT}, #{updateUser.id,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
+      #{createUser.id,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+
+    <update id="updateByEngine" parameterType="com.ecp.jces.form.TestEngineReaderForm">
+    update test_engine_reader
+    set test_engine_id = #{testEngine.id,jdbcType=VARCHAR},
+      `name` = #{name,jdbcType=VARCHAR},
+      bind_card_id = #{bindCard.id,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      update_user = #{updateUser.id,jdbcType=VARCHAR},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+    <update id="delete">
+        update test_engine_reader
+        set del_flg = #{delFlg}
+        where test_engine_id = #{testEngine.id}
+    </update>
+    <update id="changeStatusById">
+        update test_engine_reader
+        set status = #{status}
+        where id = #{id}
+    </update>
+</mapper>

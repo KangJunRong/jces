@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.task.TestReportDataMapper">
+  <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestReportDataVo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_id" jdbcType="VARCHAR" property="taskId" />
+    <result column="schedule_id" jdbcType="VARCHAR" property="scheduleId" />
+    <result column="cap_name" jdbcType="VARCHAR" property="capName" />
+    <result column="c6" jdbcType="INTEGER" property="c6" />
+    <result column="c7" jdbcType="INTEGER" property="c7" />
+    <result column="c8" jdbcType="INTEGER" property="c8" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+  </resultMap>
+
+  <select id="list" parameterType="com.ecp.jces.form.TestReportDataForm" resultMap="BaseResultMap">
+    select * from test_report_load
+    <where>
+      1=1
+      <if test="scheduleId != null and scheduleId != '' ">
+        and schedule_id = #{scheduleId,jdbcType=VARCHAR}
+      </if>
+      <if test="taskId != null and taskId != '' ">
+        and task_id = #{taskId}
+      </if>
+    </where>
+  </select>
+  <select id="maxLoadList" resultType="com.ecp.jces.vo.TestReportDataVo">
+    SELECT cap_name as capName,max(c6) as c6,max(c7) as c7,max(c8) as c8 FROM `test_report_load`
+    where task_id = #{taskId} group by cap_name
+  </select>
+  <select id="maxInstallList" resultType="com.ecp.jces.vo.TestReportDataVo">
+    SELECT b.instance_aid as capName,max(a.c6) as c6,max(a.c7) as c7,max(a.c8) as c8,b.install_param as installParam
+    FROM `test_report_install`  as a
+    INNER JOIN applet_instance b on a.cap_name = b.id
+    where a.task_id = #{taskId} group by a.cap_name
+  </select>
+
+  <insert id="addInstall" parameterType="com.ecp.jces.form.TestReportDataForm">
+    insert into test_report_install (task_id, schedule_id, cap_name, c6, c7, c8, create_date
+      )
+    values (#{taskId}, #{scheduleId}, #{capName}, #{c6}, #{c7}, #{c8}, #{createDate}
+      )
+  </insert>
+
+  <insert id="addLoadBatch">
+    insert into test_report_load (task_id, schedule_id, cap_name, c6, c7, c8, create_date
+      )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.taskId}, #{item.scheduleId}, #{item.capName}, #{item.c6}, #{item.c7}, #{item.c8}, #{item.createDate} )
+    </foreach>
+  </insert>
+    <insert id="addInstallBatch">
+      insert into test_report_install (task_id, schedule_id, cap_name, c6, c7, c8, create_date
+      )
+      values
+      <foreach collection="list" item="item" index="index" separator=",">
+        (#{item.taskId}, #{item.scheduleId}, #{item.capName}, #{item.c6}, #{item.c7}, #{item.c8}, #{item.createDate} )
+      </foreach>
+    </insert>
+
+    <select id="installList" parameterType="com.ecp.jces.form.TestReportDataForm" resultMap="BaseResultMap">
+    select a.c6,a.c7,a.c8, CONCAT(b.module_aid,'-',b.instance_aid)  as cap_name from test_report_install a
+    INNER JOIN applet_instance b on a.cap_name = b.id
+    <where>
+      1=1
+      <if test="scheduleId != null and scheduleId != '' ">
+        and a.schedule_id = #{scheduleId,jdbcType=VARCHAR}
+      </if>
+      <if test="taskId != null and taskId != '' ">
+        and a.task_id = #{taskId}
+      </if>
+    </where>
+  </select>
+</mapper>

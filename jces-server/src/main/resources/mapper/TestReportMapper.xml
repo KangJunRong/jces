@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.task.TestReportMapper">
+  <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestReportVo">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="applet_id" jdbcType="VARCHAR" property="appletId" />
+    <result column="applet_version_id" jdbcType="VARCHAR" property="appletVersionId" />
+    <result column="test_schedule_id" jdbcType="VARCHAR" property="testScheduleId" />
+    <result column="test_card_id" jdbcType="VARCHAR" property="testCardId" />
+    <result column="c7" jdbcType="INTEGER" property="c7" />
+    <result column="c8" jdbcType="INTEGER" property="c8" />
+    <result column="result" jdbcType="SMALLINT" property="result" />
+    <result column="log_path" jdbcType="VARCHAR" property="logPath" />
+    <result column="business_result" jdbcType="SMALLINT" property="businessResult" />
+    <result column="business_log_path" jdbcType="VARCHAR" property="businessLogPath" />
+    <result column="del_flg" jdbcType="SMALLINT" property="delFlg" />
+    <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="create_user" jdbcType="VARCHAR" property="createUser" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="error_info" jdbcType="TIMESTAMP" property="errorInfo" />
+    <result column="manufacturer_name" jdbcType="VARCHAR" property="manufacturerName" />
+    <result column="model" jdbcType="VARCHAR" property="model" />
+    <result column="c6" jdbcType="INTEGER" property="c6" />
+    <result column="download_all_time" jdbcType="DECIMAL" property="downloadAllTime" />
+    <result column="download_max_time" jdbcType="DECIMAL" property="downloadMaxTime" />
+    <result column="install_all_time" jdbcType="DECIMAL" property="installAllTime" />
+    <result column="install_max_time" jdbcType="DECIMAL" property="installMaxTime" />
+    <result column="unload_all_time" jdbcType="DECIMAL" property="unloadAllTime" />
+    <result column="unload_max_time" jdbcType="DECIMAL" property="unloadMaxTime" />
+    <result column="download_min_time" jdbcType="DECIMAL" property="downloadMinTime" />
+    <result column="install_min_time" jdbcType="DECIMAL" property="installMinTime" />
+    <result column="unload_min_time" jdbcType="DECIMAL" property="unloadMinTime" />
+
+    <result column="load_c6" jdbcType="INTEGER" property="loadC6" />
+    <result column="load_c7" jdbcType="INTEGER" property="loadC7" />
+    <result column="load_c8" jdbcType="INTEGER" property="loadC8" />
+  </resultMap>
+
+  <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select *
+    from test_report
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+  <select id="findByTestScheduleId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select *
+    from test_report
+    where test_schedule_id = #{testScheduleId,jdbcType=VARCHAR} and del_flg = 0
+  </select>
+
+  <delete id="del" parameterType="java.lang.String">
+    delete from test_report
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="add" parameterType="com.ecp.jces.form.TestReportForm">
+    insert into test_report (id, applet_id, applet_version_id, 
+      test_schedule_id, test_card_id, c7, 
+      c8, result, log_path, 
+      business_result, business_log_path, del_flg, 
+      update_user, update_date, create_user, 
+      create_date, error_info, c6,
+      download_all_time, download_max_time, install_all_time, install_max_time, unload_all_time,
+      unload_max_time, download_min_time, install_min_time, unload_min_time,
+      load_c6,load_c7,load_c8)
+    values (#{id,jdbcType=VARCHAR}, #{appletId,jdbcType=VARCHAR}, #{appletVersionId,jdbcType=VARCHAR}, 
+      #{testScheduleId,jdbcType=VARCHAR}, #{testCardId,jdbcType=VARCHAR}, #{c7,jdbcType=INTEGER}, 
+      #{c8,jdbcType=INTEGER}, #{result,jdbcType=SMALLINT}, #{logPath,jdbcType=VARCHAR}, 
+      #{businessResult,jdbcType=SMALLINT}, #{businessLogPath,jdbcType=VARCHAR}, #{delFlg,jdbcType=SMALLINT}, 
+      #{updateUser,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{errorInfo}, #{c6},
+      #{downloadAllTime}, #{downloadMaxTime}, #{installAllTime}, #{installMaxTime}, #{unloadAllTime},
+      #{unloadMaxTime}, #{downloadMinTime}, #{installMinTime}, #{unloadMinTime},
+      #{loadC6}, #{loadC7}, #{loadC8})
+  </insert>
+
+  <update id="edit" parameterType="com.ecp.jces.form.TestReportForm">
+    update test_report
+    <set>
+      <if test="appletId != null and appletId != '' ">
+        applet_id = #{appletId,jdbcType=VARCHAR},
+      </if>
+      <if test="appletVersionId != null and appletVersionId != '' ">
+        applet_version_id = #{appletVersionId,jdbcType=VARCHAR},
+      </if>
+      <if test="testScheduleId != null and testScheduleId != '' ">
+        test_schedule_id = #{testScheduleId,jdbcType=VARCHAR},
+      </if>
+      <if test="testCardId != null and testCardId != '' ">
+        test_card_id = #{testCardId,jdbcType=VARCHAR},
+      </if>
+      <if test="c7 != null">
+        c7 = #{c7,jdbcType=INTEGER},
+      </if>
+      <if test="c8 != null">
+        c8 = #{c8,jdbcType=INTEGER},
+      </if>
+      <if test="result != null">
+        result = #{result,jdbcType=SMALLINT},
+      </if>
+      <if test="logPath != null and logPath != '' ">
+        log_path = #{logPath,jdbcType=VARCHAR},
+      </if>
+      <if test="businessResult != null">
+        business_result = #{businessResult,jdbcType=SMALLINT},
+      </if>
+      <if test="businessLogPath != null and businessLogPath != '' ">
+        business_log_path = #{businessLogPath,jdbcType=VARCHAR},
+      </if>
+      <if test="delFlg != null">
+        del_flg = #{delFlg,jdbcType=SMALLINT},
+      </if>
+      <if test="updateUser != null and updateUser != '' ">
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null and createUser != '' ">
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="errorInfo != null and errorInfo != '' ">
+        error_info = #{errorInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="c6 != null">
+        c6 = #{c6},
+      </if>
+      <if test="downloadAllTime != null">
+        download_all_time = #{downloadAllTime},
+      </if>
+      <if test="downloadMaxTime != null">
+        download_max_time = #{downloadMaxTime},
+      </if>
+      <if test="installAllTime != null">
+        install_all_time = #{installAllTime},
+      </if>
+      <if test="installMaxTime != null">
+        install_max_time = #{installMaxTime},
+      </if>
+      <if test="unloadAllTime != null">
+        unload_all_time = #{unloadAllTime},
+      </if>
+      <if test="unloadMaxTime != null">
+        unload_max_time = #{unloadMaxTime},
+      </if>
+
+      <if test="downloadMinTime != null">
+        download_min_time = #{downloadMinTime},
+      </if>
+      <if test="installMinTime != null">
+        install_min_time = #{installMinTime},
+      </if>
+      <if test="unloadMinTime != null">
+        unload_min_time = #{unloadMinTime},
+      </if>
+      <if test="loadC6 != null">
+        load_c6 = #{loadC6},
+      </if>
+      <if test="loadC7 != null">
+        load_c7 = #{loadC7},
+      </if>
+      <if test="loadC8 != null">
+        load_c8 = #{loadC8},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="listByTaskId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select b.*,d.name as manufacturer_name ,c.model
+    from test_schedule as a
+    left join test_report as b on a.id = b.test_schedule_id
+    left join test_card as c on b.test_card_id = c.id
+	left join test_card_manufacturer as d on d.id = c.manufacturer_id
+    where a.test_task_id = #{taskId}
+  </select>
+
+  <select id="listCommByTaskId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select b.*,a.test_card_id as manufacturer_name
+    from test_schedule as a
+    inner join test_report as b on a.id = b.test_schedule_id
+    where a.test_task_id = #{taskId} and test_content = 1
+  </select>
+
+  <select id="listParamByTaskId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select b.*,a.test_card_id as manufacturer_name
+    from test_schedule as a
+    inner join test_report as b on a.id = b.test_schedule_id
+    where a.test_task_id = #{taskId} and test_content = 4
+  </select>
+  <select id="findUserIdByLogPath" resultType="java.lang.String">
+    select a.create_user from applet a INNER JOIN test_report b on a.id = b.applet_id
+    where b.log_path = #{logPath} limit 1
+  </select>
+
+</mapper>

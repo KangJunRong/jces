@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.applet.AppletVersionMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.AppletVersionVo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="applet_id" jdbcType="VARCHAR" property="appletId"/>
+        <result column="cap_path" jdbcType="VARCHAR" property="capPath"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="del_flg" jdbcType="SMALLINT" property="delFlg"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    </resultMap>
+
+    <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select *
+    from applet_version
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        select *
+        from applet_version
+        <where>
+            1=1
+            <if test="appletId != null and appletId != '' ">
+                and applet_id = #{appletId}
+            </if>
+            <if test="status != null and status != '' ">
+                and status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="delFlg != null">
+                and del_flg = #{delFlg,jdbcType=SMALLINT}
+            </if>
+            <if test="createUser != null and createUser != '' ">
+                and create_user = #{createUser,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by create_date desc
+    </select>
+    <select id="getCapLastVersion" resultType="java.lang.Integer">
+        select IFNULL(max(version),0) from applet_version where applet_id = #{appletId}
+    </select>
+
+    <delete id="del" parameterType="java.lang.String">
+    delete from applet_version
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+    <insert id="add">
+    insert into applet_version (id, name, version, 
+      applet_id, cap_path, description, 
+      status, del_flg, update_user, 
+      update_date, create_user, create_date, examine
+      )
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, 
+      #{appletId,jdbcType=VARCHAR}, #{capPath,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{delFlg,jdbcType=SMALLINT}, #{updateUser,jdbcType=VARCHAR}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
+      #{examine}
+      )
+  </insert>
+
+    <update id="edit">
+        update applet_version
+        <set>
+            <if test="name != null and name != '' ">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null and version != '' ">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="appletId != null and appletId != '' ">
+                applet_id = #{appletId,jdbcType=VARCHAR},
+            </if>
+            <if test="capPath != null and capPath != '' ">
+                cap_path = #{capPath,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null and description != '' ">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null and status != '' ">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlg != null and delFlg != '' ">
+                del_flg = #{delFlg,jdbcType=SMALLINT},
+            </if>
+            <if test="updateUser != null and updateUser != '' ">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null and updateDate != '' ">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null and createUser != '' ">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null and createDate != '' ">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="examine != null and examine != '' ">
+                examine = #{examine,jdbcType=VARCHAR},
+            </if>
+            <if test="reason != null and reason != '' ">
+                reason = #{reason,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <select id="appletVersionCreateCount" resultType="java.util.HashMap">
+        select DATE_FORMAT(create_date,'%m-%d') as "date",
+        count(*) as "number"
+        from applet_version
+        where
+        del_flg = 0
+        <if test="createDateStart != null">
+            and create_date &gt;= #{createDateStart}
+        </if>
+        <if test="createDateEnd != null">
+            and create_date &lt;= #{createDateEnd}
+        </if>
+        group by DATE_FORMAT(create_date,'%Y-%m-%d')
+        order by create_date ASC
+    </select>
+
+    <select id="findByTaskId" resultType="com.ecp.jces.form.extra.StartTestForm">
+        SELECT  a.id as testTaskId ,a.applet_id as appletId ,b.cap_path as capPath,b.version as capVersion,b.name as capName,
+                c.path as customizeScriptPath , c.version as customizeScriptVersion , c.`name` as customizeScriptName,
+				d.path as commonScriptPath , d.version as commonScriptVersion , d.`name` as commonScriptName,
+				e.install_param as installParam, e.load_param as loadParam, a.applet_version_id as appletVersionId
+        FROM `test_task` a
+        INNER JOIN applet_version b on a.applet_version_id = b.id
+		INNER JOIN test_script d on a.test_script_id = d.id
+        LEFT JOIN test_business_script c on a.test_business_script_id = c.id
+        LEFT JOIN applet as e on a.applet_id = e.id
+        where a.id =  #{taskId} and a.del_flg = 0
+    </select>
+
+</mapper>

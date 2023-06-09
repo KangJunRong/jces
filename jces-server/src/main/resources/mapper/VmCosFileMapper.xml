@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.cos.VmCosFileMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.VmCosFileVo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="file_id" jdbcType="VARCHAR" property="fileId"/>
+        <result column="no" jdbcType="INTEGER" property="no"/>
+        <result column="cos_id" jdbcType="VARCHAR" property="cosId"/>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
+        <result column="size" jdbcType="VARCHAR" property="size"/>
+        <result column="del_flg" jdbcType="INTEGER" property="delFlg"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="file_hash" jdbcType="VARCHAR" property="fileHash"/>
+        <result column="version_no" jdbcType="VARCHAR" property="versionNo"/>
+    </resultMap>
+
+    <select id="list" resultMap="BaseResultMap">
+        select id,
+        file_id,
+        `no`,
+        cos_id,
+        file_name,
+        `size`,
+        del_flg,
+        update_user,
+        update_date,
+        create_user,
+        create_date,
+        file_hash
+        from vm_cos_file
+        <where>
+            <if test="cosId != null and cosId != ''">
+                cos_id = #{cosId}
+            </if>
+            and del_flg = 0
+        </where>
+        order by no asc
+    </select>
+
+    <insert id="add">
+        insert into vm_cos_file (id, file_id, `no`, cos_id, file_name, `size`, del_flg, update_user, update_date,
+                                 create_user, create_date, file_hash)
+        values (#{id,jdbcType=VARCHAR}, #{fileId,jdbcType=VARCHAR}, #{no,jdbcType=INTEGER}, #{cosId,jdbcType=VARCHAR},
+                #{fileName,jdbcType=VARCHAR}, #{size,jdbcType=VARCHAR}, #{delFlg,jdbcType=INTEGER},
+                #{updateUser,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
+                #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{fileHash,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="del">
+        delete from vm_cos_file where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete
+        from vm_cos_file
+        where cos_id = #{cosId}
+    </delete>
+
+    <select id="getCosChildVersion" resultMap="BaseResultMap">
+        SELECT a.version_no, b.no, b.file_id, b.file_name, b.id
+        FROM `vm_cos` a
+                 INNER JOIN
+             (SELECT *
+              FROM vm_cos_file k
+              WHERE NOT EXISTS(SELECT 1 FROM vm_cos_file j WHERE k.cos_id = j.cos_id AND k.no &lt; j.no)) b
+             on a.id = b.cos_id
+        where a.del_flg = 0
+          and a.`status` = 2
+    </select>
+</mapper>

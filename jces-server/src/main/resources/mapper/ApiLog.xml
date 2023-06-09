@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.api.ApiLogMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.ApiLogVo">
+        <id column="id" jdbcType="VARCHAR" property="id"></id>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="uri" jdbcType="VARCHAR" property="uri"/>
+        <result column="result" jdbcType="VARCHAR" property="result"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="applet_version_id" jdbcType="VARCHAR" property="appletVersionId"/>
+        <result column="del_flg" jdbcType="INTEGER" property="delFlg"/>
+        <result column="response_time" jdbcType="BIGINT" property="responseTime"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    </resultMap>
+
+    <select id="list" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select id,
+               `name`,
+               uri,
+               `result`,
+               ip,
+               applet_version_id,
+               del_flg,
+               response_time,
+               update_user,
+               update_date,
+               create_user,
+               create_date
+        from api_log
+        where 1 = 1
+          <if test="startTime!=null and endTime != null">
+              and create_date between #{startTime} and #{endTime}
+          </if>
+          and del_flg = 0
+order by create_date desc
+    </select>
+
+    <insert id="insert" parameterType="com.ecp.jces.form.ApiLogForm">
+        insert into api_log (id, name, uri, result, ip, applet_version_id, del_flg,
+                             response_time, update_user, update_date, create_user, create_date)
+        values (#{id}, #{name}, #{uri}, #{result}, #{ip}, #{appletVersionId}, #{delFlg},
+                #{responseTime}, #{updateUser}, #{updateDate}, #{createUser}, #{createDate})
+    </insert>
+</mapper>

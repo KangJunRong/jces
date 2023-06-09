@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ecp.jces.server.dc.mapper.applet.TestBusinessScriptMapper">
+    <resultMap id="BaseResultMap" type="com.ecp.jces.vo.TestBusinessScriptVo">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="applet_id" jdbcType="VARCHAR" property="appletId"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="log_path" jdbcType="VARCHAR" property="logPath"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="del_flg" jdbcType="SMALLINT" property="delFlg"/>
+        <result column="update_user" jdbcType="VARCHAR" property="updateUser"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="create_user" jdbcType="VARCHAR" property="createUser"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+
+        <result column="applet_name" jdbcType="VARCHAR" property="appletName"/>
+        <result column="applet_aid" jdbcType="VARCHAR" property="appletAid"/>
+
+        <result column="test_start" jdbcType="TIMESTAMP" property="testStart"/>
+        <result column="test_end" jdbcType="TIMESTAMP" property="testEnd"/>
+        <result column="error_info" jdbcType="VARCHAR" property="errorInfo"/>
+    </resultMap>
+
+    <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select *
+    from test_business_script
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        select b.id, b.version, b.path, b.log_path, b.description, b.status, b.update_user, b.update_date,
+        b.create_user, b.create_date,b.name,b.test_start ,b.test_end,
+        a.name as applet_name,a.applet_aid,a.id as applet_id, b.error_info
+        from applet as a left join test_business_script as b
+        on a.test_business_script_id = b.id and b.del_flg = 0
+        <where>
+            1=1
+            <if test="appletName != null and appletName != '' ">
+                and a.`name` like concat('%',#{appletName},'%')
+            </if>
+            <if test="packageAid != null and packageAid != '' ">
+                and a.package_aid like concat('%',#{packageAid},'%')
+            </if>
+            <if test="appletAid != null and appletAid != '' ">
+                and a.applet_aid like concat('%',#{appletAid},'%')
+            </if>
+            <if test="appletId != null and appletId != '' ">
+                and b.applet_id = #{appletId}
+            </if>
+            <if test="status != null and status != '' ">
+                and b.status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="delFlg != null">
+                and a.del_flg = #{delFlg,jdbcType=SMALLINT}
+            </if>
+            <if test="createUser != null and createUser != '' ">
+                and a.create_user = #{createUser,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by a.create_date desc
+    </select>
+    <select id="getLastVersion" resultMap="BaseResultMap">
+    SELECT * FROM `test_business_script`
+    where applet_id = #{appletId} order by version desc limit 1
+  </select>
+
+    <select id="findByAppletId" resultMap="BaseResultMap">
+    select b.id, b.version, b.path, b.description, b.status, b.update_user, b.update_date, b.name,
+        b.create_user, b.create_date,
+        a.name as applet_name,a.applet_aid,a.id as applet_id
+    from  applet as a left join test_business_script as b on a.test_business_script_id = b.id and b.del_flg = 0
+    where a.id = #{appletId}
+</select>
+    <select id="findUserIdByLogPath" resultType="java.lang.String">
+        SELECT
+            c.create_user
+        FROM
+            test_business_log a
+                INNER JOIN test_schedule b ON a.test_schedule_id = b.id
+                INNER JOIN test_task c ON b.test_task_id = c.id
+        WHERE
+                a.business_log_path = #{logPath}
+            LIMIT 1
+    </select>
+    <delete id="del" parameterType="java.lang.String">
+    delete from test_business_script
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+    <insert id="add">
+    insert into test_business_script (id, applet_id, version, `name`,
+      path, description, status, 
+      del_flg, update_user, update_date, 
+      create_user, create_date)
+    values (#{id,jdbcType=VARCHAR}, #{appletId,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, #{name},
+      #{path,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{delFlg,jdbcType=SMALLINT}, #{updateUser,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+
+    <update id="edit">
+        update test_business_script
+        <set>
+            <if test="appletId != null and appletId != '' ">
+                applet_id = #{appletId,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null ">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="path != null and path != '' ">
+                path = #{path,jdbcType=VARCHAR},
+            </if>
+            <if test="logPath != null and logPath != '' ">
+                log_path = #{logPath,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null and description != '' ">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null and status != '' ">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="delFlg != null ">
+                del_flg = #{delFlg,jdbcType=SMALLINT},
+            </if>
+            <if test="updateUser != null and updateUser != '' ">
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null ">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null and createUser != '' ">
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null ">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="errorInfo != null and errorInfo != '' ">
+                error_info = #{errorInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="testStart != null ">
+                test_start = #{testStart,jdbcType=TIMESTAMP},
+            </if>
+            <if test="testEnd != null ">
+                test_end = #{testEnd,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+</mapper>
